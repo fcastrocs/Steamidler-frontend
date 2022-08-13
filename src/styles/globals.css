@@ -1,0 +1,94 @@
+:root {
+  --primaryColor: #4e6a92;
+  --lightColor: #8daad7;
+  --darkColor: #2e4f76;
+  --box: linear-gradient(to left, var(--darkColor), var(--primaryColor));
+  --border: solid 1px var(--lightColor);
+}
+
+/* General */
+html,
+body {
+  color: white !important;
+  letter-spacing: 0.03rem;
+  background: rgb(38, 43, 73);
+}
+
+h1, h2, h3, h4, h5, h6{
+  color: white;
+}
+
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+main {
+  flex: 1; /* takes the remaining height of the "#root" */
+  overflow: auto;
+  display: flex;
+  justify-content: center;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(151, 172, 204);
+  border: solid 2px rgb(0, 98, 255);
+  border-radius: 10px;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+a:hover {
+  color: white;
+}
+
+hr {
+  border: var(--border);
+  background-color: var(--lightColor);
+}
+
+.ant-modal-header {
+  background: var(--box);
+  border-bottom: var(--border);
+  border-radius: 10px 10px 0 0;
+}
+
+.ant-modal-close-icon{
+  color: white;
+}
+
+.ant-modal-content {
+  border-radius: 10px;
+}
+
+.ant-modal-title {
+  color: white;
+}
+
+.ant-modal-content {
+  background: var(--box);
+}
+
+.ant-form-item-required {
+  color: white !important;
+}
+
+.ant-form-item {
+  margin: 10px 0;
+}
+
+.ant-alert {
+  margin-bottom: 10px;
+}
+
+.ant-btn {
+  width: 100%;
+}

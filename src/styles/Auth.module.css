@@ -1,0 +1,12 @@
+.passwordValidation {
+  color: white;
+}
+
+.topHeaderBtn {
+  margin-left: 30px;
+  cursor: pointer;
+}
+
+.topHeaderBtn:hover {
+  color: var(--lightColor);
+}

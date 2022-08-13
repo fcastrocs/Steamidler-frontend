@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.top {
+  width: 100%;
+  padding: 0.3rem;
+  background: linear-gradient(310deg, rgba(19, 31, 46, 0.418), rgba(60, 137, 209, 0.418) 90%);
+  border: solid 1px rgb(40, 132, 160);
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.bottom {
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+}
+
+.separator {
+  margin: 0 1rem;
+  color: rgb(0, 153, 255);
+}
+
+.num {
+  color: rgb(206, 206, 206);
+  font-size: 0.9rem;
+}
