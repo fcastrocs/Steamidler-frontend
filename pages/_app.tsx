@@ -1,17 +1,16 @@
 import "antd/dist/antd.css";
 import "../styles/globals.css";
+import type { AppProps } from "next/app";
+import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { checkIsUserLoggedIn } from "../commons";
 
-import React, { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
-
-import Home from "./Home";
 import MiniHeader from "../components/Header/Header";
 import Footer from "../components/Layout/Footer";
-import { checkIsUserLoggedIn } from "../commons";
 
 const AuthContext = createContext<{ isLoggedIn: boolean; setIsLoggedIn: Dispatch<SetStateAction<boolean>> }>({} as any);
 export { AuthContext };
 
-export default function Index() {
+function App({ Component, pageProps }: AppProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -23,9 +22,11 @@ export default function Index() {
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
       <MiniHeader />
       <main>
-        <Home />
+        <Component {...pageProps} />
       </main>
       <Footer />
     </AuthContext.Provider>
   );
 }
+
+export default App;

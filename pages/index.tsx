@@ -1,7 +1,7 @@
-import React from "react";
+import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 
-export default function Home() {
+const Home: NextPage = () => {
   return (
     <div className={styles.home}>
       <div className={styles.section}>
@@ -10,7 +10,7 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
 
 function Features() {
   return (
@@ -51,3 +51,5 @@ function Stats() {
     </div>
   );
 }
+
+export default Home;

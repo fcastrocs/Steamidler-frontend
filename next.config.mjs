@@ -3,7 +3,6 @@ const HOST = ["http://localhost:8000", "https://api.steamidler.com"];
 
 const nextConfig = {
   reactStrictMode: true,
-  trailingSlash: true,
   swcMinify: true,
   async rewrites() {
     return [
