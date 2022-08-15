@@ -5,6 +5,7 @@ import React, { useContext, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { AuthContext } from "../../pages/_app";
 import { checkResponseStatus, logUserIn } from "../../commons";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 export default function LoginModal() {
   const [visible, setVisible] = useState(false);
@@ -55,35 +56,44 @@ function LoginForm() {
 
   const onRecaptchaVerify = (value: any) => setRecaptchaResponse(value);
 
+  const [form] = Form.useForm();
+
   return (
-    <Form
-      name="login"
-      labelCol={{ span: 5 }}
-      wrapperCol={{ span: 16 }}
-      initialValues={{ remember: true }}
-      onFinish={onFormSubmit}
-      autoComplete="on"
-    >
+    <div>
       {error && <Alert message={error} type="error" showIcon />}
+      <Form form={form} name="login" onFinish={onFormSubmit}>
+        <Form.Item name="email" rules={[{ required: true, message: "Please input your username!" }]}>
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
+        </Form.Item>
 
-      <Form.Item label="email" name="email" rules={[{ required: true, message: "Please input your email!" }]}>
-        <Input />
-      </Form.Item>
+        <Form.Item name="password" rules={[{ required: true, message: "Please input your password!" }]}>
+          <Input prefix={<LockOutlined className="site-form-item-icon" />} type="password" placeholder="Password" />
+        </Form.Item>
 
-      <Form.Item label="Password" name="password" rules={[{ required: true, message: "Please input your password!" }]}>
-        <Input.Password />
-      </Form.Item>
+        <Form.Item>
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0"
+            onChange={onRecaptchaVerify}
+          />
+        </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 5 }}>
-        <ReCAPTCHA ref={recaptchaRef} sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0" onChange={onRecaptchaVerify} />
-      </Form.Item>
-
-      <hr />
-      <Form.Item wrapperCol={{ offset: 0 }}>
-        <Button type="primary" htmlType="submit" disabled={!recaptchaResponse}>
-          Login
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={
+                !form.isFieldsTouched(true) ||
+                !!form.getFieldsError().filter(({ errors }) => errors.length).length ||
+                !recaptchaResponse
+              }
+            >
+              Log in
+            </Button>
+          )}
+        </Form.Item>
+      </Form>
+    </div>
   );
 }

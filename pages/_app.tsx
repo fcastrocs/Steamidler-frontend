@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { checkIsUserLoggedIn } from "../commons";
 
-import MiniHeader from "../components/Header/Header";
+import Header from "../components/Header/Header";
 import Footer from "../components/Layout/Footer";
 
 const AuthContext = createContext<{ isLoggedIn: boolean; setIsLoggedIn: Dispatch<SetStateAction<boolean>> }>({} as any);
@@ -20,7 +20,7 @@ function App({ Component, pageProps }: AppProps) {
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-      <MiniHeader />
+      <Header />
       <main>
         <Component {...pageProps} />
       </main>

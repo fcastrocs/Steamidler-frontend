@@ -5,6 +5,7 @@ import React, { useContext, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { AuthContext } from "../../pages/_app";
 import { checkResponseStatus, logUserIn } from "../../commons";
+import { KeyOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 
 export default function RegisterModal() {
   const [visible, setVisible] = useState(false);
@@ -27,44 +28,33 @@ export default function RegisterModal() {
 function RegisterForm() {
   const [error, setError] = useState("");
   const [recaptchaResponse, setRecaptchaResponse] = useState("");
+  const auth = useContext(AuthContext);
+  const recaptchaRef = React.createRef<ReCAPTCHA>();
   const [passwordValidation, setPasswordValidation] = useState([false, false, false, false, false, false]);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
-  const recaptchaRef = React.createRef<ReCAPTCHA>();
-
-  const value = useContext(AuthContext);
 
   const onFormSubmit = async (form: any) => {
     form["g_response"] = recaptchaResponse;
 
     try {
-      const user = await fetch("/api/user/register", {
+      const user = await fetch("/api/user/login", {
         method: "POST",
         headers: {
+          "Access-Control-Allow-Origin": "*",
           "Content-Type": "application/json",
         },
         body: JSON.stringify(form),
       }).then((response) => checkResponseStatus(response));
 
       // user registered successfully
-      logUserIn(user, value.setIsLoggedIn);
+      logUserIn(user, auth.setIsLoggedIn);
     } catch (error) {
+      // reset captcha
       recaptchaRef.current?.reset();
-
-      let message = (error as Error).message;
-      if (message === "Exists") {
-        message = "This email is already registered.";
-      } else if (message === "NotFound") {
-        message = "This invite code is invalid.";
-      } else if (message === "InvalidPassword") {
-        message = "Invalid password.";
-      } else if (message === "InvalidEmail") {
-        message = "Email is not valid.";
-      }
+      const message = (error as Error).message;
       setError(message);
     }
   };
-
-  const onRecaptchaVerify = (value: any) => setRecaptchaResponse(value);
 
   const validatePassword = (allFields: any) => {
     setPasswordValidation([false, false, false, false, false, false]);
@@ -105,82 +95,99 @@ function RegisterForm() {
     }
   };
 
+  const onRecaptchaVerify = (value: any) => setRecaptchaResponse(value);
+
+  const [form] = Form.useForm();
+
   return (
-    <Form
-      name="register"
-      labelCol={{ span: 8 }}
-      initialValues={{ remember: true }}
-      onFinish={onFormSubmit}
-      autoComplete="on"
-      onValuesChange={(_, allFields) => {
-        validatePassword(allFields);
-      }}
-    >
+    <div>
       {error && <Alert message={error} type="error" showIcon />}
-
-      <Form.Item label="email" name="email" rules={[{ required: true, message: "Please input your email!" }]}>
-        <Input />
-      </Form.Item>
-
-      <Form.Item label="Password" name="password" rules={[{ required: true, message: "Please input your password!" }]}>
-        <Input.Password />
-      </Form.Item>
-
-      <Form.Item wrapperCol={{ offset: 8 }}>
-        <div className={styles.passwordValidation}>
-          <div>
-            <span>{passwordValidation[0] ? "✅" : "❌"}</span>
-            <span>must be 8-32 characters long</span>
-          </div>
-          <div>
-            <span>{passwordValidation[1] ? "✅" : "❌"}</span>
-            <span>at least one digit</span>
-          </div>
-          <div>
-            <span>{passwordValidation[2] ? "✅" : "❌"}</span>
-            <span>at least one lowercase letter</span>
-          </div>
-          <div>
-            <span>{passwordValidation[3] ? "✅" : "❌"}</span>
-            <span>at least one uppercase letter</span>
-          </div>
-          <div>
-            <span>{passwordValidation[4] ? "✅" : "❌"}</span>
-            <span>at least special character</span>
-          </div>
-          <div>
-            <span>{passwordValidation[5] ? "✅" : "❌"}</span>
-            <span>no space</span>
-          </div>
-        </div>
-      </Form.Item>
-
-      <Form.Item
-        label="Re-enter password"
-        name="password2"
-        rules={[{ required: true, message: "Please input your password!" }]}
+      <Form
+        form={form}
+        name="login"
+        onFinish={onFormSubmit}
+        onValuesChange={(_, allFields) => {
+          validatePassword(allFields);
+        }}
       >
-        <Input.Password />
-      </Form.Item>
+        <Form.Item name="email" rules={[{ required: true, message: "Please input your username!" }]}>
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
+        </Form.Item>
 
-      <Form.Item
-        label="Invite Code"
-        name="inviteCode"
-        rules={[{ required: true, message: "Please input your invite code!" }]}
-      >
-        <Input />
-      </Form.Item>
+        <Form.Item name="password" rules={[{ required: true, message: "Please input your password!" }]}>
+          <Input.Password
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Password"
+          />
+        </Form.Item>
 
-      <Form.Item wrapperCol={{ offset: 5 }}>
-        <ReCAPTCHA ref={recaptchaRef} sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0" onChange={onRecaptchaVerify} />
-      </Form.Item>
+        <Form.Item>
+          <div className={styles.passwordValidation}>
+            <div>
+              <span>{passwordValidation[0] ? "✅" : "❌"}</span>
+              <span>must be 8-32 characters long</span>
+            </div>
+            <div>
+              <span>{passwordValidation[1] ? "✅" : "❌"}</span>
+              <span>at least one digit</span>
+            </div>
+            <div>
+              <span>{passwordValidation[2] ? "✅" : "❌"}</span>
+              <span>at least one lowercase letter</span>
+            </div>
+            <div>
+              <span>{passwordValidation[3] ? "✅" : "❌"}</span>
+              <span>at least one uppercase letter</span>
+            </div>
+            <div>
+              <span>{passwordValidation[4] ? "✅" : "❌"}</span>
+              <span>at least special character</span>
+            </div>
+            <div>
+              <span>{passwordValidation[5] ? "✅" : "❌"}</span>
+              <span>no space</span>
+            </div>
+          </div>
+        </Form.Item>
 
-      <hr />
-      <Form.Item>
-        <Button type="primary" htmlType="submit" disabled={!recaptchaResponse || !isPasswordValid}>
-          Register
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item name="password2" rules={[{ required: true, message: "Please input your password!" }]}>
+          <Input.Password
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Password"
+          />
+        </Form.Item>
+
+        <Form.Item name="inviteCode" rules={[{ required: true, message: "Please input your invite code!" }]}>
+          <Input prefix={<KeyOutlined />} type="text" placeholder="Invite code" />
+        </Form.Item>
+
+        <Form.Item>
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0"
+            onChange={onRecaptchaVerify}
+          />
+        </Form.Item>
+
+        <Form.Item shouldUpdate>
+          {() => (
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={
+                !form.isFieldsTouched(true) ||
+                !!form.getFieldsError().filter(({ errors }) => errors.length).length ||
+                !recaptchaResponse ||
+                !isPasswordValid
+              }
+            >
+              Register
+            </Button>
+          )}
+        </Form.Item>
+      </Form>
+    </div>
   );
 }

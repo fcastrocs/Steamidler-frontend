@@ -11,7 +11,7 @@ function Footer() {
 }
 
 function Affiliation() {
-  return <div className="affiliation">SteamIdler.com is not affiliated with Valve or Steam.</div>;
+  return <div className="affiliation">SteamIdler is a hobby project and is not affiliated with Valve or Steam.</div>;
 }
 
 function CopyRight() {
