@@ -4,21 +4,30 @@ import React from "react";
 
 const Home: NextPage = () => {
   return (
-    <div className={styles.home}>
-      <div className={styles.section}>
-        <div className={styles.sectionName}>Features</div>
-        <div className={styles.sectionBody}>
-          <Features />
+    <>
+      <div className={styles.home}>
+        <div className={styles.section}>
+          <div className={styles.sectionName}>Features</div>
+          <div className={styles.sectionBody}>
+            <Features />
+          </div>
         </div>
-      </div>
 
-      <div className={styles.section}>
-        <div className={styles.sectionName}>Server Status</div>
-        <div className={styles.sectionBody}>
-          <Stats />
+        <div className={styles.section}>
+          <div className={styles.sectionName}>Server Status</div>
+          <div className={styles.sectionBody}>
+            <ServerStatus />
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <div className={styles.sectionName}>Stats</div>
+          <div className={styles.sectionBody}>
+            <Stats />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -27,26 +36,36 @@ function Features() {
     <>
       <div className={styles.item}>
         <div className={styles.header}>🎮</div>
-        <div className={styles.content}>Idle up to 32 games from your library.</div>
+        <div className={styles.content}>Idle up to 32 games from your library at a time.</div>
       </div>
       <div className={styles.item}>
         <div className={styles.header}>🧑‍🌾</div>
-        <div className={styles.content}>Farm all your trading cards.</div>
+        <div className={styles.content}>Farm all your trading cards with a single click.</div>
       </div>
       <div className={styles.item}>
         <div className={styles.header}>⚙️</div>
         <div className={styles.content}>
-          <div>Change avatar, persona status, privacy settings.</div>
+          <div>Change avatar, persona, privacy, nickname.</div>
           <div>Redeem cd-keys.</div>
           <div>Add any free to play game.</div>
           <div>Clear previous aliases.</div>
+          <div>Send trade offers.</div>
+        </div>
+      </div>
+
+      <div className={styles.item}>
+        <div className={styles.header}>🌐</div>
+        <div className={styles.content}>
+          <div>No Vac bans because Valve acknowledges idling. </div>
+          <div>Support for 2FA and email Steam Guard.</div>
+          <div>Auto-restard account on disconnect.</div>
         </div>
       </div>
     </>
   );
 }
 
-function Stats() {
+function ServerStatus() {
   return (
     <div className={styles.serverBody}>
       <h4>Updates every 5 mins</h4>
@@ -122,6 +141,16 @@ function Stats() {
         </div>
       </div>
     </div>
+  );
+}
+
+function Stats() {
+  return (
+    <>
+      <div className={styles.item}>
+        <div className={styles.content}>Idled hours: 45k</div>
+      </div>
+    </>
   );
 }
 

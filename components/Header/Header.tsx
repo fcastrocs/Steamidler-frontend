@@ -9,7 +9,7 @@ import Logout from "./Logout";
 
 function Header() {
   return (
-    <header className={styles.header}>
+    <header>
       <TopHeader />
       <BottomHeader />
     </header>
@@ -30,7 +30,7 @@ function TopHeader() {
 function BottomHeader() {
   return (
     <div className={styles.bottomHeader}>
-      <div className={styles.home}>
+      <div className={styles.logoBox}>
         <img className={styles.logo} src="android-chrome-192x192.png" alt="icon" />
         <div>Steamidler.com</div>
       </div>

@@ -6,30 +6,35 @@
   --border: solid 1px var(--lightColor);
 }
 
-/* General */
-/* html,
 body {
   color: white !important;
   letter-spacing: 0.03rem;
-  background: url(/background.png) no-repeat center center fixed;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  height: 100%;
-} */
+  background: linear-gradient(75deg, rgb(21, 21, 71) 0%, rgb(73, 53, 124) 100%) fixed;
+}
 
-html,
-body {
-  color: white !important;
-  letter-spacing: 0.03rem;
-  background: rgb(46, 46, 156);
-  background: linear-gradient(75deg, rgb(21, 21, 71) 0%, rgb(73, 53, 124) 100%);
+header {
+  display: flex;
+  flex-flow: column nowrap;
+  color: white;
+  width: 100%;
+  position: sticky;
+  top: 0;
+}
+
+footer{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 main {
-  padding-top: 20px;
-  height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 25px 0;
 }
 
 h1,
@@ -39,14 +44,6 @@ h4,
 h5,
 h6 {
   color: white;
-}
-
-::-webkit-scrollbar {
-  width: 15px;
-}
-::-webkit-scrollbar-thumb {
-  border: solid 2px var(--darkColor);
-  border-radius: 5px;
 }
 
 a {
@@ -75,7 +72,7 @@ hr {
   color: white;
 }
 
-.ant-modal{
+.ant-modal {
   display: flex;
   justify-content: center;
   height: fit-content;
@@ -89,7 +86,7 @@ hr {
   flex-direction: column;
   align-items: center;
   width: 350px;
-  box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.75);
 }
 
 .ant-alert {
@@ -106,6 +103,11 @@ hr {
   background: linear-gradient(25deg, rgb(77, 39, 172) 0%, rgba(46, 46, 156, 1) 100%);
 }
 
-.ant-modal-body, .ant-form{
+.ant-modal-body,
+.ant-form {
   width: 100%;
+}
+
+@media only screen and (max-width: 1499px) {
+
 }
