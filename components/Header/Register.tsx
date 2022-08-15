@@ -4,8 +4,8 @@ import { Alert, Button, Form, Input, Modal } from "antd";
 import React, { useContext, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { AuthContext } from "../../pages/_app";
-import { checkResponseStatus, logUserIn } from "../../commons";
-import { KeyOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
+import { checkResponseStatus, logUserIn, request } from "../../commons";
+import { KeyOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 
 export default function RegisterModal() {
   const [visible, setVisible] = useState(false);
@@ -32,27 +32,18 @@ function RegisterForm() {
   const recaptchaRef = React.createRef<ReCAPTCHA>();
   const [passwordValidation, setPasswordValidation] = useState([false, false, false, false, false, false]);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
 
   const onFormSubmit = async (form: any) => {
     form["g_response"] = recaptchaResponse;
 
     try {
-      const user = await fetch("/api/user/login", {
-        method: "POST",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      }).then((response) => checkResponseStatus(response));
-
-      // user registered successfully
-      logUserIn(user, auth.setIsLoggedIn);
+      const userInfo = await request("POST", "/api/user/register", form);
+      logUserIn(userInfo, auth.setIsLoggedIn);
     } catch (error) {
       // reset captcha
       recaptchaRef.current?.reset();
-      const message = (error as Error).message;
-      setError(message);
+      setError(error as string);
     }
   };
 
@@ -93,10 +84,17 @@ function RegisterForm() {
       setError("");
       setIsPasswordValid(true);
     }
+
+    if (allFields["username"]) {
+      if (/[a-zA-Z0-9]{3,12}/.test(allFields["username"])) {
+        setIsUsernameValid(true);
+      } else {
+        setIsUsernameValid(false);
+      }
+    }
   };
 
   const onRecaptchaVerify = (value: any) => setRecaptchaResponse(value);
-
   const [form] = Form.useForm();
 
   return (
@@ -110,53 +108,60 @@ function RegisterForm() {
           validatePassword(allFields);
         }}
       >
-        <Form.Item name="email" rules={[{ required: true, message: "Please input your username!" }]}>
-          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
+        <Form.Item
+          className={styles.inputValidation}
+          name="username"
+          rules={[{ required: true, message: "Please input your username!" }]}
+        >
+          <Input prefix={<UserOutlined />} placeholder="username" />
         </Form.Item>
 
-        <Form.Item name="password" rules={[{ required: true, message: "Please input your password!" }]}>
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="Password"
-          />
+        <div className={styles.validation}>
+          <span>{isUsernameValid ? "✅" : "❌"}</span>
+          <span>Alphanumeric and 3-12 characters long</span>
+        </div>
+
+        <Form.Item name="email" rules={[{ required: true, message: "Please input your email!" }]}>
+          <Input prefix={<MailOutlined />} placeholder="email" />
         </Form.Item>
 
-        <Form.Item>
-          <div className={styles.passwordValidation}>
-            <div>
-              <span>{passwordValidation[0] ? "✅" : "❌"}</span>
-              <span>must be 8-32 characters long</span>
-            </div>
-            <div>
-              <span>{passwordValidation[1] ? "✅" : "❌"}</span>
-              <span>at least one digit</span>
-            </div>
-            <div>
-              <span>{passwordValidation[2] ? "✅" : "❌"}</span>
-              <span>at least one lowercase letter</span>
-            </div>
-            <div>
-              <span>{passwordValidation[3] ? "✅" : "❌"}</span>
-              <span>at least one uppercase letter</span>
-            </div>
-            <div>
-              <span>{passwordValidation[4] ? "✅" : "❌"}</span>
-              <span>at least special character</span>
-            </div>
-            <div>
-              <span>{passwordValidation[5] ? "✅" : "❌"}</span>
-              <span>no space</span>
-            </div>
+        <Form.Item
+          className={styles.inputValidation}
+          name="password"
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
+          <Input.Password prefix={<LockOutlined />} type="password" placeholder="Password" />
+        </Form.Item>
+
+        <div className={styles.validation}>
+          <div>
+            <span>{passwordValidation[0] ? "✅" : "❌"}</span>
+            <span>8-32 characters long</span>
           </div>
-        </Form.Item>
+          <div>
+            <span>{passwordValidation[1] ? "✅" : "❌"}</span>
+            <span>at least one digit</span>
+          </div>
+          <div>
+            <span>{passwordValidation[2] ? "✅" : "❌"}</span>
+            <span>at least one lowercase letter</span>
+          </div>
+          <div>
+            <span>{passwordValidation[3] ? "✅" : "❌"}</span>
+            <span>at least one uppercase letter</span>
+          </div>
+          <div>
+            <span>{passwordValidation[4] ? "✅" : "❌"}</span>
+            <span>at least special character</span>
+          </div>
+          <div>
+            <span>{passwordValidation[5] ? "✅" : "❌"}</span>
+            <span>no space</span>
+          </div>
+        </div>
 
         <Form.Item name="password2" rules={[{ required: true, message: "Please input your password!" }]}>
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="Password"
-          />
+          <Input.Password prefix={<LockOutlined />} type="password" placeholder="Password" />
         </Form.Item>
 
         <Form.Item name="inviteCode" rules={[{ required: true, message: "Please input your invite code!" }]}>

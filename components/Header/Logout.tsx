@@ -1,17 +1,14 @@
 import React from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../pages/_app";
-import { logUserOut } from "../../commons";
+import { logUserOut, request } from "../../commons";
 import styles from "../../styles/Auth.module.css";
 
 export default function Logout() {
   const auth = useContext(AuthContext);
 
   const logout = async (form: any) => {
-    await fetch("/api/user/logout", {
-      method: "POST",
-    });
-
+    await request("POST", "/api/user/logout");
     logUserOut(auth.setIsLoggedIn);
   };
 

@@ -4,7 +4,7 @@ import { Alert, Button, Form, Input, Modal } from "antd";
 import React, { useContext, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { AuthContext } from "../../pages/_app";
-import { checkResponseStatus, logUserIn } from "../../commons";
+import { checkResponseStatus, logUserIn, request } from "../../commons";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 export default function LoginModal() {
@@ -35,22 +35,13 @@ function LoginForm() {
     form["g_response"] = recaptchaResponse;
 
     try {
-      const user = await fetch("/api/user/login", {
-        method: "POST",
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      }).then((response) => checkResponseStatus(response));
-
-      // user registered successfully
-      logUserIn(user, auth.setIsLoggedIn);
+      const userInfo = await request("POST", "/api/user/login", form);
+      // user logged in successfully
+      logUserIn(userInfo, auth.setIsLoggedIn);
     } catch (error) {
       // reset captcha
       recaptchaRef.current?.reset();
-      const message = (error as Error).message;
-      setError(message);
+      setError(error as string);
     }
   };
 
@@ -63,11 +54,11 @@ function LoginForm() {
       {error && <Alert message={error} type="error" showIcon />}
       <Form form={form} name="login" onFinish={onFormSubmit}>
         <Form.Item name="email" rules={[{ required: true, message: "Please input your username!" }]}>
-          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
+          <Input prefix={<UserOutlined />} placeholder="email" />
         </Form.Item>
 
         <Form.Item name="password" rules={[{ required: true, message: "Please input your password!" }]}>
-          <Input prefix={<LockOutlined className="site-form-item-icon" />} type="password" placeholder="Password" />
+          <Input.Password prefix={<LockOutlined />} type="password" placeholder="Password" />
         </Form.Item>
 
         <Form.Item>

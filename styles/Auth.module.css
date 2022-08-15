@@ -1,5 +1,6 @@
-.passwordValidation {
+.validation {
   color: white;
+  margin: 10px 0;
 }
 
 .topHeaderBtn {
@@ -9,4 +10,8 @@
 
 .topHeaderBtn:hover {
   color: var(--lightColor);
+}
+
+.inputValidation {
+  margin: 5px 0;
 }
