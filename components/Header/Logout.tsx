@@ -8,7 +8,7 @@ export default function Logout() {
   const auth = useContext(AuthContext);
 
   const logout = async (form: any) => {
-    await request("POST", "/api/user/logout");
+    await request("POST", "/user/logout");
     logUserOut(auth.setIsLoggedIn);
   };
 

@@ -35,7 +35,7 @@ function LoginForm() {
     form["g_response"] = recaptchaResponse;
 
     try {
-      const userInfo = await request("POST", "/api/user/login", form);
+      const userInfo = await request("POST", "/user/login", form);
       // user logged in successfully
       logUserIn(userInfo, auth.setIsLoggedIn);
     } catch (error) {
