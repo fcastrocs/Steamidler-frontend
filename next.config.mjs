@@ -7,7 +7,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/:path*",
+        source: "/api/:path*",
         destination: `${process.env.NODE_ENV === "production" ? HOST[1] : HOST[0]}/:path*`,
       },
     ];

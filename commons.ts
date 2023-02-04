@@ -28,7 +28,7 @@ export function checkIsUserLoggedIn() {
  * wrap around fetch
  */
 export async function request(method: string, url: string, json?: Object) {
-  return await fetch(url, {
+  return await fetch("/api/" + url, {
     method,
     headers: {
       "Content-Type": "application/json",

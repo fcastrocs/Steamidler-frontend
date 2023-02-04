@@ -38,7 +38,7 @@ function RegisterForm() {
     form["g_response"] = recaptchaResponse;
 
     try {
-      const userInfo = await request("POST", "/user/register", form);
+      const userInfo = await request("POST", "user/register", form);
       logUserIn(userInfo, auth.setIsLoggedIn);
     } catch (error) {
       // reset captcha
