@@ -28,7 +28,7 @@ export function checkIsUserLoggedIn() {
  * wrap around fetch
  */
 export async function request(method: string, url: string, json?: Object) {
-  return await fetch("/api/" + url, {
+  return await fetch("http://api.steamidler.com/" + url, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -42,7 +42,7 @@ export async function request(method: string, url: string, json?: Object) {
  */
 export const checkResponseStatus = async (response: Response) => {
   console.log(response);
-  
+
   // response is okay
   if (response.ok) {
     // response.status >= 200 && response.status < 300
