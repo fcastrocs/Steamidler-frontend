@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const HOST = ["localhost:8000", "api.steamidler.com"];
+const HOST = ["http://localhost:8000", "http://api.steamidler.com"];
 
 const nextConfig = {
   reactStrictMode: true,
