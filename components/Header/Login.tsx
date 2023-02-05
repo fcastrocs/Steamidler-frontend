@@ -6,6 +6,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { AuthContext } from "../../pages/_app";
 import { checkResponseStatus, logUserIn, request } from "../../commons";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { log } from "console";
 
 export default function LoginModal() {
   const [visible, setVisible] = useState(false);
@@ -39,9 +40,15 @@ function LoginForm() {
       // user logged in successfully
       logUserIn(userInfo, auth.setIsLoggedIn);
     } catch (error) {
+      let messageStr = error;
+
+      if (error instanceof Error) {
+        messageStr = (error as Error).message;
+      }
+
       // reset captcha
       recaptchaRef.current?.reset();
-      setError(error as string);
+      setError(messageStr as string);
     }
   };
 

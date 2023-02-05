@@ -28,21 +28,24 @@ export function checkIsUserLoggedIn() {
  * wrap around fetch
  */
 export async function request(method: string, url: string, json?: Object) {
-  return await fetch("https://api.steamidler.com/" + url, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: json ? JSON.stringify(json) : JSON.stringify({}),
-  }).then((response) => checkResponseStatus(response));
+  try {
+    return await fetch("https://api.steamidler.com/" + url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: json ? JSON.stringify(json) : JSON.stringify({}),
+    }).then((response) => checkResponseStatus(response));
+  } catch (error) {
+    console.log(error);
+    throw new Error("Unexpected error occurred.");
+  }
 }
 
 /**
  * Check response status
  */
 export const checkResponseStatus = async (response: Response) => {
-  console.log(response);
-
   // response is okay
   if (response.ok) {
     // response.status >= 200 && response.status < 300
@@ -50,11 +53,10 @@ export const checkResponseStatus = async (response: Response) => {
   }
 
   if (response.status === 400 || response.status === 401) {
-    const error = (await response.json()) as Error;
-    console.debug(error);
-    throw error.message;
+    const error = await response.json();
+    throw new Error(error);
   }
 
   // something unexpected
-  throw response.statusText;
+  throw new Error(response.statusText);
 };
