@@ -6,6 +6,7 @@ import { AuthContext } from "../../pages/_app";
 import RegisterModal from "./Register";
 import LoginModal from "./Login";
 import Logout from "./Logout";
+import Image from "next/image";
 
 function Header() {
   return (
@@ -31,7 +32,7 @@ function BottomHeader() {
   return (
     <div className={styles.bottomHeader}>
       <div className={styles.logoBox}>
-        <img className={styles.logo} src="android-chrome-192x192.png" alt="icon" />
+        <Image className={styles.logo} src="/android-chrome-192x192.png" alt="icon" width={192} height={192} />
         <div>Steamidler.com</div>
       </div>
     </div>
