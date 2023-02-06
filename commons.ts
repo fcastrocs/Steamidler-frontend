@@ -29,7 +29,7 @@ export function checkIsUserLoggedIn() {
 export async function request(method: string, url: string, json?: Object) {
   let res: Response;
   try {
-    res = await fetch((process.env.BACKEND_URL || "http://localhost:8000/") + url, {
+    res = await fetch((process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/") + url, {
       method,
       headers: {
         "Content-Type": "application/json",
