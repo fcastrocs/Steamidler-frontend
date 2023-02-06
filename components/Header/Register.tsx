@@ -4,6 +4,7 @@ import { AuthContext } from "../../pages/_app";
 import { logUserIn, request } from "../../commons";
 import { Alert, Button, Form, InputGroup, Modal } from "react-bootstrap";
 import { MdOutlineAccountCircle, MdOutlineMail, MdOutlineVpnKey, MdPassword } from "react-icons/md";
+import styles from "../../styles/Auth.module.css";
 
 export default function RegisterModal() {
   const [show, setShow] = useState(false);
@@ -11,7 +12,7 @@ export default function RegisterModal() {
   const handleShow = () => setShow(true);
 
   return (
-    <>
+    <div className={styles.topHeaderBtn}>
       <div onClick={handleShow}>
         <span>Register</span>
       </div>
@@ -23,7 +24,7 @@ export default function RegisterModal() {
           <RegisterForm />
         </Modal.Body>
       </Modal>
-    </>
+    </div>
   );
 }
 

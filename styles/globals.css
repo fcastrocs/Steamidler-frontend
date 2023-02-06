@@ -6,9 +6,14 @@
   --border: solid 1px var(--lightColor);
 }
 
+
 body {
   letter-spacing: 0.03rem;
   background: linear-gradient(75deg, rgb(21, 21, 71) 0%, rgb(73, 53, 124) 100%) fixed;
+}
+
+.container-fluid{
+  color: white;
 }
 
 header {

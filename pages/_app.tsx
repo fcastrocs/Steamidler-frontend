@@ -2,10 +2,10 @@ import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { checkIsUserLoggedIn } from "../commons";
-import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/css/bootstrap.min.css";
 
-import Header from "../components/Header/Header";
-import Footer from "../components/Layout/Footer";
+import Header from "../components/header/Header";
+import Footer from "../components/layout/Footer";
 
 const AuthContext = createContext<{ isLoggedIn: boolean; setIsLoggedIn: Dispatch<SetStateAction<boolean>> }>({} as any);
 export { AuthContext };

@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { AuthContext } from "../../pages/_app";
 import { logUserIn, request } from "../../commons";
+import styles from "../../styles/Auth.module.css";
 
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -14,7 +15,7 @@ export default function LoginModal() {
   const handleShow = () => setShow(true);
 
   return (
-    <>
+    <div className={styles.topHeaderBtn}>
       <div onClick={handleShow}>
         <span>Login</span>
       </div>
@@ -26,7 +27,7 @@ export default function LoginModal() {
           <LoginForm />
         </Modal.Body>
       </Modal>
-    </>
+    </div>
   );
 }
 
