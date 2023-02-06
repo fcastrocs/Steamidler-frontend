@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react";
-import { json } from "stream/consumers";
 
 export function logUserIn(user: any, setIsLoggedIn: Dispatch<SetStateAction<boolean>>) {
   if (typeof window !== "undefined") {
@@ -28,18 +27,22 @@ export function checkIsUserLoggedIn() {
  * wrap around fetch
  */
 export async function request(method: string, url: string, json?: Object) {
+  let res: Response;
   try {
-    return await fetch("https://api.steamidler.com/" + url, {
+    res = await fetch("http://localhost:8000/" + url, {
       method,
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: json ? JSON.stringify(json) : JSON.stringify({}),
-    }).then((response) => checkResponseStatus(response));
+    });
   } catch (error) {
     console.log(error);
     throw new Error("Unexpected error occurred.");
   }
+
+  return await checkResponseStatus(res);
 }
 
 /**
@@ -54,9 +57,11 @@ export const checkResponseStatus = async (response: Response) => {
 
   if (response.status === 400 || response.status === 401) {
     const error = await response.json();
-    throw new Error(error);
+    console.log(error);
+    throw new Error((error as Error).message);
   }
 
-  // something unexpected
-  throw new Error(response.statusText);
+  // something unexpected happended
+  console.log(response.statusText);
+  throw new Error("Unexpected error occurred.");
 };

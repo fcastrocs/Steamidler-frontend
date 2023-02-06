@@ -1,8 +1,8 @@
-import "antd/dist/antd.css";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { checkIsUserLoggedIn } from "../commons";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Header from "../components/Header/Header";
 import Footer from "../components/Layout/Footer";

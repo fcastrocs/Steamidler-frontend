@@ -7,9 +7,14 @@ import styles from "../../styles/Auth.module.css";
 export default function Logout() {
   const auth = useContext(AuthContext);
 
-  const logout = async (form: any) => {
-    await request("POST", "user/logout");
-    logUserOut(auth.setIsLoggedIn);
+  const logout = async () => {
+    try {
+      await request("POST", "user/logout");
+      // user logged in successfully
+      logUserOut(auth.setIsLoggedIn);
+    } catch (error) {
+      // setError((error as Error).message);
+    }
   };
 
   return (

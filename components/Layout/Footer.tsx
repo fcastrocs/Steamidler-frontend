@@ -18,7 +18,7 @@ function CopyRight() {
   return (
     <div className="copyright">
       {" "}
-      Made by <a href="https://steamcommunity.com/profiles/76561197960410044/"> Machiavelli</a> © 2022
+      Made by <a href="https://steamcommunity.com/profiles/76561197960410044/"> Machiavelli</a> © 2023
     </div>
   );
 }

@@ -1,26 +1,30 @@
-import styles from "../../styles/Auth.module.css";
-
-import { Alert, Button, Form, Input, Modal } from "antd";
 import React, { useContext, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { AuthContext } from "../../pages/_app";
-import { checkResponseStatus, logUserIn, request } from "../../commons";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { log } from "console";
+import { logUserIn, request } from "../../commons";
+
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import { Alert, Form, InputGroup } from "react-bootstrap";
+import { MdOutlineMail, MdPassword } from "react-icons/md";
 
 export default function LoginModal() {
-  const [visible, setVisible] = useState(false);
-
-  const showModal = () => setVisible(true);
-  const handleCancel = (e: React.MouseEvent<HTMLElement>) => setVisible(false);
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   return (
     <>
-      <div onClick={showModal} className={styles.topHeaderBtn}>
+      <div onClick={handleShow}>
         <span>Login</span>
       </div>
-      <Modal title="Login" visible={visible} onCancel={handleCancel} footer={null}>
-        <LoginForm />
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Login</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <LoginForm />
+        </Modal.Body>
       </Modal>
     </>
   );
@@ -28,70 +32,81 @@ export default function LoginModal() {
 
 function LoginForm() {
   const [error, setError] = useState("");
-  const [recaptchaResponse, setRecaptchaResponse] = useState("");
+  const [g_response, setRecaptchaResponse] = useState<string | null>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const auth = useContext(AuthContext);
   const recaptchaRef = React.createRef<ReCAPTCHA>();
 
-  const onFormSubmit = async (form: any) => {
-    form["g_response"] = recaptchaResponse;
+  const onFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!g_response) {
+      setError("Solve the Recaptcha.");
+    }
 
     try {
-      const userInfo = await request("POST", "user/login", form);
+      const userInfo = await request("POST", "user/login", { email, password, g_response });
       // user logged in successfully
       logUserIn(userInfo, auth.setIsLoggedIn);
     } catch (error) {
-      let messageStr = error;
-
-      if (error instanceof Error) {
-        messageStr = (error as Error).message;
-      }
-
       // reset captcha
       recaptchaRef.current?.reset();
-      setError(messageStr as string);
+      setError((error as Error).message);
     }
   };
 
-  const onRecaptchaVerify = (value: any) => setRecaptchaResponse(value);
-
-  const [form] = Form.useForm();
-
   return (
-    <div>
-      {error && <Alert message={error} type="error" showIcon />}
-      <Form form={form} name="login" onFinish={onFormSubmit}>
-        <Form.Item name="email" rules={[{ required: true, message: "Please input your username!" }]}>
-          <Input prefix={<UserOutlined />} placeholder="email" />
-        </Form.Item>
+    <Form onSubmit={onFormSubmit}>
+      {error && (
+        <Alert key={"danger"} variant={"danger"}>
+          {error}
+        </Alert>
+      )}
 
-        <Form.Item name="password" rules={[{ required: true, message: "Please input your password!" }]}>
-          <Input.Password prefix={<LockOutlined />} type="password" placeholder="Password" />
-        </Form.Item>
+      <InputGroup className="mb-3">
+        <InputGroup.Text id="email-addon">
+          <MdOutlineMail />
+        </InputGroup.Text>
+        <Form.Control
+          required
+          type="email"
+          placeholder="Email"
+          onChange={(e) => setEmail(e.target.value)}
+          aria-describedby="email-addon"
+        />
+      </InputGroup>
 
-        <Form.Item>
-          <ReCAPTCHA
-            ref={recaptchaRef}
-            sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0"
-            onChange={onRecaptchaVerify}
-          />
-        </Form.Item>
+      <InputGroup className="mb-3">
+        <InputGroup.Text id="password-addon">
+          <MdPassword />
+        </InputGroup.Text>
+        <Form.Control
+          required
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+          aria-describedby="password-addon"
+        />
+      </InputGroup>
 
-        <Form.Item shouldUpdate>
-          {() => (
-            <Button
-              type="primary"
-              htmlType="submit"
-              disabled={
-                !form.isFieldsTouched(true) ||
-                !!form.getFieldsError().filter(({ errors }) => errors.length).length ||
-                !recaptchaResponse
-              }
-            >
-              Log in
-            </Button>
-          )}
-        </Form.Item>
-      </Form>
-    </div>
+      <Form.Group className="mb-3">
+        <ReCAPTCHA
+          ref={recaptchaRef}
+          sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0"
+          onChange={(value) => setRecaptchaResponse(value)}
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <a href="">Forgot password?</a>
+      </Form.Group>
+
+      <div className="d-grid gap-2">
+        <Button variant="primary" type="submit">
+          Login
+        </Button>
+      </div>
+    </Form>
   );
 }
