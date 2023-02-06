@@ -4,8 +4,8 @@ import { createContext, Dispatch, SetStateAction, useEffect, useState } from "re
 import { checkIsUserLoggedIn } from "../commons";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import Header from "../components/header/Header";
-import Footer from "../components/layout/Footer";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const AuthContext = createContext<{ isLoggedIn: boolean; setIsLoggedIn: Dispatch<SetStateAction<boolean>> }>({} as any);
 export { AuthContext };

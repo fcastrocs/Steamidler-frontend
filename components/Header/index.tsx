@@ -3,8 +3,8 @@ import styles from "../../styles/Header.module.css";
 import { useContext } from "react";
 import { AuthContext } from "../../pages/_app";
 
-import RegisterModal from "./Register";
-import LoginModal from "./Login";
+import RegisterModal from "./RegisterModal";
+import LoginModal from "./LoginModal";
 import Logout from "./Logout";
 import Image from "next/image";
 
