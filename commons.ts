@@ -1,28 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
 
-export function logUserIn(user: any, setIsLoggedIn: Dispatch<SetStateAction<boolean>>) {
-  if (typeof window !== "undefined") {
-    localStorage.setItem("session", "true");
-    localStorage.setItem("user", JSON.stringify(user));
-  }
-  setIsLoggedIn(true);
-}
-
-export function logUserOut(setIsLoggedIn: Dispatch<SetStateAction<boolean>>) {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("session");
-    localStorage.removeItem("user");
-  }
-  setIsLoggedIn(false);
-}
-
-export function checkIsUserLoggedIn() {
-  if (typeof window !== "undefined") {
-    if (localStorage.getItem("session")) return true;
-  }
-  return false;
-}
-
 /**
  * wrap around fetch
  */
@@ -35,7 +12,7 @@ export async function request(method: string, url: string, json?: Object) {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: json ? JSON.stringify(json) : JSON.stringify({}),
+      body: json ? JSON.stringify(json) : null,
     });
   } catch (error) {
     console.log(error);
@@ -65,3 +42,8 @@ export const checkResponseStatus = async (response: Response) => {
   console.log(response.statusText);
   throw new Error("Unexpected error occurred.");
 };
+
+export async function logout(setLoggedIn: Dispatch<SetStateAction<boolean>>) {
+  await request("POST", "user/logout");
+  setLoggedIn(false);
+}

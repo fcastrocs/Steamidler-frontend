@@ -1,31 +1,38 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { createContext, Dispatch, SetStateAction, useEffect, useState } from "react";
-import { checkIsUserLoggedIn } from "../commons";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-
-const AuthContext = createContext<{ isLoggedIn: boolean; setIsLoggedIn: Dispatch<SetStateAction<boolean>> }>({} as any);
-export { AuthContext };
+import { useEffect, useState } from "react";
+import { request } from "../commons";
 
 function App({ Component, pageProps }: AppProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    const res = checkIsUserLoggedIn();
-    setIsLoggedIn(res);
-  }, []);
+    async function verifyAuth() {
+      try {
+        await request("GET", "user/verifyauth");
+        setLoggedIn(true);
+      } catch (error) {
+        setLoggedIn(false);
+      }
+    }
+
+    if (!isLoggedIn) {
+      verifyAuth();
+    }
+  }, [isLoggedIn]);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
-      <Header />
+    <>
+      <Header isLoggedIn={isLoggedIn} setLoggedIn={setLoggedIn} />
       <main>
-        <Component {...pageProps} />
+        <Component setLoggedIn={setLoggedIn} isLoggedIn={isLoggedIn} />
       </main>
       <Footer />
-    </AuthContext.Provider>
+    </>
   );
 }
 

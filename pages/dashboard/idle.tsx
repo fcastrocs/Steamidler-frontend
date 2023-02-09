@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import React from "react";
 
-const Idle: NextPage = () => {
+const Idle: NextPage = (props) => {
   return <></>;
 };
 

@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import React from "react";
 
-const Farm: NextPage = () => {
+const Farm: NextPage = (props) => {
   return <></>;
 };
 
