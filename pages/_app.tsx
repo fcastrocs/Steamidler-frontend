@@ -24,6 +24,7 @@ function App({ Component, pageProps }: AppProps) {
       verifyAuth();
     }
   }, [isLoggedIn]);
+  
 
   return (
     <>

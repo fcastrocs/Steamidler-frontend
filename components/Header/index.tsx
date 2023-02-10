@@ -14,7 +14,6 @@ function Header(props: Props) {
   return (
     <header>
       <TopHeader isLoggedIn={props.isLoggedIn} setLoggedIn={props.setLoggedIn} />
-      <BottomHeader />
     </header>
   );
 }
@@ -23,6 +22,15 @@ function TopHeader(props: Props) {
   const router = useRouter();
   return (
     <div className={styles.topHeader}>
+      <div className={styles.logoBox}>
+        <Link href="/"><Image className={styles.logo} src="/android-chrome-192x192.png" alt="icon" width={70} height={70} /></Link>
+        <Link href="/" className={`h3 mx-2`} id={styles.textLink}>Steamidler.com</Link>
+      </div>
+      {props.isLoggedIn && (
+        <div>
+          <Link href="/dashboard" className={`h2 text-center`} id={styles.dashboardLink}>Dashboard</Link>
+        </div>
+      )}
       {props.isLoggedIn && (
         <div
           className={styles.topHeaderBtn}
@@ -35,29 +43,20 @@ function TopHeader(props: Props) {
         </div>
       )}
       {!props.isLoggedIn && (
-        <Link className={styles.topHeaderBtn} href="/login">
-          Login
-        </Link>
+        <div className={styles.logContainer}>
+          <Link className={styles.topHeaderBtn} id={styles.logIn} href="/login">
+            Login
+          </Link>
+          <Link className={styles.topHeaderBtn} id={styles.signUp} href="/register">
+            Sign Up
+          </Link>
+        </div>
       )}
-      {!props.isLoggedIn && (
-        <Link className={styles.topHeaderBtn} href="/register">
-          Regiister
-        </Link>
-      )}
+
+
     </div>
   );
 }
 
-function BottomHeader() {
-  return (
-    <div className={styles.bottomHeader}>
-      <div className={styles.logoBox}>
-        <Image className={styles.logo} src="/android-chrome-192x192.png" alt="icon" width={192} height={192} />
-        <Link href="/">Steamidler.com</Link>
-        <Link href="/dashboard">dashboard</Link>
-      </div>
-    </div>
-  );
-}
 
 export default Header;
