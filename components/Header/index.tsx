@@ -1,45 +1,43 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useContext } from "react";
 import styles from "../../styles/Header.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { logout } from "../../commons";
 import { useRouter } from "next/router";
+import { AuthContext } from "../AuthProvider";
 
-type Props = {
-  setLoggedIn: Dispatch<SetStateAction<boolean>>;
-  isLoggedIn: boolean;
-};
-
-function Header(props: Props) {
+function Header() {
   return (
     <header>
-      <TopHeader isLoggedIn={props.isLoggedIn} setLoggedIn={props.setLoggedIn} />
+      <TopHeader />
       <BottomHeader />
     </header>
   );
 }
 
-function TopHeader(props: Props) {
+function TopHeader() {
   const router = useRouter();
+  const auth = useContext(AuthContext);
+
   return (
     <div className={styles.topHeader}>
-      {props.isLoggedIn && (
+      {auth.isLoggedIn && (
         <div
           className={styles.topHeaderBtn}
           onClick={() => {
-            logout(props.setLoggedIn);
+            logout(auth.setLoggedIn);
             router.push("/");
           }}
         >
           Logout
         </div>
       )}
-      {!props.isLoggedIn && (
+      {!auth.isLoggedIn && (
         <Link className={styles.topHeaderBtn} href="/login">
           Login
         </Link>
       )}
-      {!props.isLoggedIn && (
+      {!auth.isLoggedIn && (
         <Link className={styles.topHeaderBtn} href="/register">
           Regiister
         </Link>

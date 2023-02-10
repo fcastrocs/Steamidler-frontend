@@ -6,14 +6,7 @@ export default class WS extends EventEmitter {
   constructor(url: string) {
     super();
     this.ws = new WebSocket(url);
-    this.onOpenListener();
     this.onMessageListener();
-  }
-
-  private onOpenListener() {
-    this.ws.addEventListener("open", () => {
-      this.emit("open");
-    });
   }
 
   public send(message: { type: string; body?: any }) {
