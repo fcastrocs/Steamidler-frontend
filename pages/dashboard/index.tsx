@@ -1,27 +1,31 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import AddSteamAccount from "../../components/Dashboard/AddSteamAccount";
-import WS from "../../WebSocket";
+import { WebSocketContext } from "../../components/WebSocketProvider";
 
 const Dashboard: NextPage = () => {
   const firstUpdate = useRef(true);
-  const wsRef = useRef<WS | null>(null);
   const [steamAccounts, setSteamAccounts] = useState([]);
+  const [accountsLoaded, setAccountsLoaded] = useState(false);
   const router = useRouter();
+  const ws = useContext(WebSocketContext);
 
   useEffect(() => {
-    const ws = new WS("ws://localhost:8000");
-    wsRef.current = ws;
+    if (!ws) return;
 
-    ws.on("open", () => {
+    ws.send({ type: "steamaccount/getall" });
+
+    // get all accounts
+    const interval = setInterval(() => {
       ws.send({ type: "steamaccount/getall" });
-    });
+    }, 5000);
 
     // get all steam account
     ws.on("steamaccount/getall", (data) => {
       setSteamAccounts([]);
+      setAccountsLoaded(true);
     });
 
     // state changed on a steam account
@@ -29,12 +33,10 @@ const Dashboard: NextPage = () => {
       console.log(data);
     });
 
-    firstUpdate.current = false;
+    return () => clearInterval(interval);
+  }, [ws]);
 
-    return () => ws.close();
-  }, []);
-
-  if (!steamAccounts.length && firstUpdate.current) {
+  if (!accountsLoaded && firstUpdate.current) {
     return <Spinner animation="border" />;
   }
 

@@ -7,7 +7,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { MdOutlineAccountCircle, MdOutlineMail, MdOutlineVpnKey, MdPassword } from "react-icons/md";
 import { request } from "../commons";
 
-const Register: NextPage = (props) => {
+const Register: NextPage = () => {
   const [error, setError] = useState("");
   const [g_response, setRecaptchaResponse] = useState<string | null>("");
   const [username, setUsername] = useState("");

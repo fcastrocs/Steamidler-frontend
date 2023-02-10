@@ -1,48 +1,20 @@
 import type { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, Button, Form, InputGroup, Spinner } from "react-bootstrap";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
-import WS from "../../WebSocket";
+import { WebSocketContext } from "../../components/WebSocketProvider";
 
 type ChildProps = {
   setAuthType: React.Dispatch<React.SetStateAction<"" | "QRcode" | "SteamGuardCode">>;
-  ws: WS;
-  qrCode: string;
 };
 
-const AddSteamAccount: NextPage<{ ws: WS }> = (props) => {
-  const [error, setError] = useState("");
-  const [qrCode, setQrCode] = useState("");
-  const router = useRouter();
-
+const AddSteamAccount: NextPage = () => {
   const [authType, setAuthType] = useState<"QRcode" | "SteamGuardCode" | "">("");
-
-  useEffect(() => {
-    if (!authType) return;
-
-    if (authType === "QRcode") {
-      props.ws.send({
-        type: "steamaccount/add",
-        body: {
-          authType: "QRcode",
-        },
-      });
-
-      // props.ws.once("steamaccount/waitingForConfirmation", (message) => {
-      //   console.log(message);
-      //   // setQrCode(message.info.qrCode);
-      // });
-
-      props.ws.once("error", (message) => {});
-    }
-  }, [authType]);
 
   const childprops = {
     setAuthType,
-    ws: props.ws,
-    qrCode,
   };
 
   // show auth type selection
@@ -84,7 +56,31 @@ function AuthTypeSelection(props: ChildProps) {
 }
 
 function QRCode(props: ChildProps) {
-  if (!props.qrCode) {
+  const [qrCode, setQrCode] = useState("");
+  const ws = useContext(WebSocketContext);
+
+  useEffect(() => {
+    if (!ws) return;
+
+    ws.send({
+      type: "steamaccount/add",
+      body: {
+        authType: "QRcode",
+      },
+    });
+
+    ws.on("steamaccount/waitingForConfirmation", (data) => setQrCode(data.message.qrCode));
+    ws.on("error", (message) => console.log(message));
+
+    return () => {
+      if (ws) {
+        ws.removeAllListeners("steamaccount/waitingForConfirmation");
+        ws.removeAllListeners("error");
+      }
+    };
+  }, []);
+
+  if (!qrCode) {
     return (
       <>
         <h3>WAITING ON QR CODE ...</h3>
@@ -92,10 +88,11 @@ function QRCode(props: ChildProps) {
       </>
     );
   }
+
   return (
     <div>
       <h3>Scan code with the Steam App</h3>
-      <Image src={props.qrCode} height={250} width={250} alt={"qr code"} />
+      <Image src={qrCode} height={250} width={250} alt={"qr code"} />
     </div>
   );
 }
@@ -109,9 +106,10 @@ function SteamGuardCode(props: ChildProps) {
   const [loading, setLoading] = useState(false);
   const [showCodeInput, setShowCodeInput] = useState(false);
   const [guardCode, setGuardCode] = useState("");
+  const ws = useContext(WebSocketContext);
 
   useEffect(() => {
-    props.ws.on("error", (error) => {
+    ws?.on("error", (error) => {
       setLoading(false);
       setError(error.message);
     });
@@ -123,7 +121,7 @@ function SteamGuardCode(props: ChildProps) {
       return;
     }
 
-    props.ws.send({
+    ws?.send({
       type: "steamaccount/add",
       body: {
         authType: "SteamGuardCode",
@@ -132,7 +130,7 @@ function SteamGuardCode(props: ChildProps) {
       },
     });
 
-    props.ws.on("steamaccount/add", (data) => {
+    ws?.on("steamaccount/add", (data) => {
       if (data.success) {
         setLoading(false);
         setError("");
@@ -142,7 +140,7 @@ function SteamGuardCode(props: ChildProps) {
       }
     });
 
-    props.ws.once("steamaccount/waitingForConfirmation", (data) => {
+    ws?.once("steamaccount/waitingForConfirmation", (data) => {
       setLoading(false);
       if (data.message.guardType === "deviceConfirmation") {
         setAlert("Steam sent confirmation to your Steam app.");
@@ -162,7 +160,7 @@ function SteamGuardCode(props: ChildProps) {
 
     setLoading(true);
 
-    props.ws.send({
+    ws?.send({
       type: "steamaccount/updateWithSteamGuardCode",
       body: {
         code: guardCode,

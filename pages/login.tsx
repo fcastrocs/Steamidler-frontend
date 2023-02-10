@@ -1,29 +1,25 @@
 import type { NextPage } from "next";
-import { AppProps } from "next/app";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, Button, Form, InputGroup } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { request } from "../commons";
+import { AuthContext } from "../components/AuthProvider";
 
-type Props = {
-  setLoggedIn: Dispatch<SetStateAction<boolean>>;
-  isLoggedIn: boolean;
-};
-
-const Login: NextPage<Props> = (props) => {
+const Login: NextPage = () => {
   const [error, setError] = useState("");
   const [g_response, setRecaptchaResponse] = useState<string | null>("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const recaptchaRef = React.createRef<ReCAPTCHA>();
   const router = useRouter();
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
-    if (props.isLoggedIn) router.push("/dashboard");
-  }, [props.isLoggedIn]);
+    if (auth.isLoggedIn) router.push("/dashboard");
+  }, [auth.isLoggedIn]);
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +30,7 @@ const Login: NextPage<Props> = (props) => {
 
     try {
       await request("POST", "user/login", { email, password, g_response });
-      props.setLoggedIn(true);
+      auth.setLoggedIn(true);
     } catch (error) {
       // reset captcha
       recaptchaRef.current?.reset();
