@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { Alert, Button, Form, InputGroup } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
@@ -12,21 +13,23 @@ const Register: NextPage = (props) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [invite, setInvite] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [showPassword, setShowPassword] = useState("password");
   const recaptchaRef = React.createRef<ReCAPTCHA>();
   const [passwordValidation, setPasswordValidation] = useState([false, false, false, false, false, false]);
+  const router = useRouter();
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !email || !password || !invite || !g_response) {
+    if (!username || !email || !password || !inviteCode || !g_response) {
       setError("Complete the form.");
       return;
     }
 
     try {
-      const userInfo = await request("POST", "user/register", { username, email, password, g_response });
+      const userInfo = await request("POST", "user/register", { username, email, password, g_response, inviteCode });
+      router.push("/dashboard");
     } catch (error) {
       // reset captcha
       recaptchaRef.current?.reset();
@@ -170,7 +173,7 @@ const Register: NextPage = (props) => {
             required
             type="text"
             placeholder="Invite Code"
-            onChange={(e) => setInvite(e.target.value)}
+            onChange={(e) => setInviteCode(e.target.value)}
             aria-describedby="invite-addon"
           />
         </InputGroup>
