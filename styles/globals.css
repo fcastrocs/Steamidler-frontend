@@ -6,13 +6,12 @@
   --border: solid 1px var(--lightColor);
 }
 
-
 body {
   letter-spacing: 0.03rem;
   background: linear-gradient(75deg, #6381ac 0%, #3e587c 100%) fixed;
 }
 
-.container-fluid{
+.container-fluid {
   color: white;
 }
 
@@ -25,7 +24,7 @@ header {
   top: 0;
 }
 
-footer{
+footer {
   position: absolute;
   width: 100%;
   display: flex;
@@ -49,7 +48,8 @@ h3,
 h4,
 h5,
 h6 {
-  color: white;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 a {
@@ -66,54 +66,10 @@ hr {
   background-color: var(--lightColor);
 }
 
-.ant-modal-header {
-  background: var(--box);
-  border-bottom: var(--border);
-  border-radius: 10px 10px 0 0;
-  width: 100%;
-}
-
-.ant-modal-close-icon,
-.ant-modal-title {
-  color: white;
-}
-
-.ant-modal {
-  display: flex;
-  justify-content: center;
-  height: fit-content;
-  width: 100%;
-}
-
-.ant-modal-content {
-  background: var(--box);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 350px;
-  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.75);
-}
-
-.ant-alert {
-  margin-bottom: 10px;
-}
-
-.ant-btn-primary {
-  border: none;
-  width: 100%;
-  background: linear-gradient(25deg, rgba(46, 46, 156, 1) 0%, rgb(77, 39, 172) 100%);
-}
-
-.ant-btn-primary:hover {
-  background: linear-gradient(25deg, rgb(77, 39, 172) 0%, rgba(46, 46, 156, 1) 100%);
-}
-
-.ant-modal-body,
-.ant-form {
-  width: 100%;
-}
-
 @media only screen and (max-width: 1499px) {
+}
 
+
+.row{
+  border: solid 1px black !important;
 }
