@@ -1,15 +1,15 @@
 :root {
   --primaryColor: #3e587c;
-  --lightColor: #6381ac;
+  --lightColor: #a5c5f1;
   --darkColor: #23446d;
-  --box: linear-gradient(to left, #2e4e76, #4e6a92);
+  --box: linear-gradient(to left, #2e4e76, #3e587c);
   --border: solid 1px var(--lightColor);
 }
 
 
 body {
   letter-spacing: 0.03rem;
-  background: linear-gradient(75deg, #6381ac 0%, #3e587c 100%) fixed;
+  background: linear-gradient(75deg, #a5c5f1 0%, #80aae5 100%) fixed;
 }
 
 .container-fluid{

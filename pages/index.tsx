@@ -54,7 +54,7 @@ function Features() {
     
 
       {/* Stats row */}
-      <Row className="text-center">
+      <Row className={`text-center mt-5`}>
         <h1>📊</h1>
         <div>Stats</div>
         <div>Idled hours: 10,000</div>
