@@ -6,6 +6,7 @@ import { Alert, Button, Form, InputGroup } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { MdOutlineAccountCircle, MdOutlineMail, MdOutlineVpnKey, MdPassword } from "react-icons/md";
 import { request } from "../commons";
+import styles from "../styles/Login.module.css";
 
 const Register: NextPage = () => {
   const [error, setError] = useState("");
@@ -78,27 +79,28 @@ const Register: NextPage = () => {
 
   return (
     <>
-      <Form onSubmit={onFormSubmit}>
+      <Form onSubmit={onFormSubmit} className={`my-3 ${styles.formGroup}`}>
         {error && (
           <Alert key={"danger"} variant={"danger"}>
             {error}
           </Alert>
         )}
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text id="username-addon">
+        <InputGroup className={`mb-3`}>
+          <InputGroup.Text id="username-addon" className={`${styles.addon}`}>
             <MdOutlineAccountCircle />
           </InputGroup.Text>
           <Form.Control
             required
             type="text"
             placeholder="Username"
+            className={`${styles.input}`}
             onChange={(e) => validateUsername(e.target.value)}
             aria-describedby="username-addon"
           />
         </InputGroup>
 
-        <InputGroup className="mb-4">
+        <InputGroup className={`mb-3`}>
           <div>
             <div>
               <span>{username ? "✅" : "❌"}</span>
@@ -107,20 +109,21 @@ const Register: NextPage = () => {
           </div>
         </InputGroup>
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text id="email-addon">
+        <InputGroup className={`mb-3`}>
+          <InputGroup.Text id="email-addon" className={`${styles.addon}`}>
             <MdOutlineMail />
           </InputGroup.Text>
           <Form.Control
             required
             type="email"
+            className={`${styles.input}`}
             placeholder="Email"
             onChange={(e) => setEmail(e.target.value)}
             aria-describedby="email-addon"
           />
         </InputGroup>
 
-        <InputGroup className="mb-3">
+        <InputGroup className={`mb-3`}>
           <InputGroup.Text id="password-addon">
             <MdPassword />
           </InputGroup.Text>
@@ -128,6 +131,7 @@ const Register: NextPage = () => {
             required
             type={showPassword}
             placeholder="Password"
+            className={`${styles.input}`}
             onChange={(e) => validatePassword(e.target.value)}
             aria-describedby="password-addon"
           />
@@ -136,7 +140,7 @@ const Register: NextPage = () => {
           </InputGroup.Text>
         </InputGroup>
 
-        <InputGroup className="mb-4">
+        <InputGroup className={`mb-3`}>
           <div>
             <div>
               <span>{passwordValidation[0] ? "✅" : "❌"}</span>
@@ -172,13 +176,14 @@ const Register: NextPage = () => {
           <Form.Control
             required
             type="text"
+            className={`${styles.input}`}
             placeholder="Invite Code"
             onChange={(e) => setInviteCode(e.target.value)}
             aria-describedby="invite-addon"
           />
         </InputGroup>
 
-        <Form.Group className="mb-3">
+        <Form.Group className={`mb-3`}>
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0"
@@ -186,13 +191,13 @@ const Register: NextPage = () => {
           />
         </Form.Group>
 
-        <div className="d-grid gap-2">
-          <Button variant="primary" type="submit">
-            Register
+        <div className={`d-grid gap-2`}>
+          <Button variant="primary" type="submit" className={`${styles.submit} mb-3`}>
+            Sign up
           </Button>
+          <Link className={`text-center`} href="/login">Already have an account?</Link>
         </div>
       </Form>
-      <Link href="/login">Already have an account?</Link>
     </>
   );
 };

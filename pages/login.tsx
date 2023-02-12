@@ -7,6 +7,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { request } from "../commons";
 import { AuthContext } from "../components/AuthProvider";
+import styles from "../styles/Login.module.css";
 
 const Login: NextPage = () => {
   const [error, setError] = useState("");
@@ -40,40 +41,43 @@ const Login: NextPage = () => {
 
   return (
     <>
-      <Form onSubmit={onFormSubmit}>
+      <h1 className={`${styles.header}`}>Sign in to access your account</h1>
+      <Form onSubmit={onFormSubmit} className={`mt-5 ${styles.formGroup}`}>
         {error && (
           <Alert key={"danger"} variant={"danger"}>
             {error}
           </Alert>
         )}
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text id="email-addon">
+        <InputGroup className={`mb-3`}>
+          <InputGroup.Text id="email-addon" className={`${styles.addon}`}>
             <MdOutlineMail />
           </InputGroup.Text>
           <Form.Control
             required
             type="email"
             placeholder="Email"
+            className={`${styles.input}`}
             onChange={(e) => setEmail(e.target.value)}
             aria-describedby="email-addon"
           />
         </InputGroup>
 
-        <InputGroup className="mb-3">
-          <InputGroup.Text id="password-addon">
+        <InputGroup className={`mb-3`}>
+          <InputGroup.Text id="password-addon" className={`${styles.addon}`}>
             <MdPassword />
           </InputGroup.Text>
           <Form.Control
             required
             type="password"
             placeholder="Password"
+            className={`${styles.input}`}
             onChange={(e) => setPassword(e.target.value)}
             aria-describedby="password-addon"
           />
         </InputGroup>
 
-        <Form.Group className="mb-3">
+        <Form.Group className={`mb-3`}>
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey="6LdaT2ohAAAAAHRbgi2JihngnUOW_KPz28z4ZFP0"
@@ -81,15 +85,16 @@ const Login: NextPage = () => {
           />
         </Form.Group>
 
-        <div className="d-grid gap-2">
-          <Button variant="primary" type="submit">
-            Login
+        <div className={`d-grid gap-2 mt-3`}>
+          <Button variant="primary" type="submit" className={`${styles.submit} mb-2`}>
+            Sign in
           </Button>
         </div>
+        <div className={`d-flex mt-3 flex-column text-center`}>
+          <Link href="/">Forgot password?</Link>
+          <Link href="/register">Don't have an account?</Link>
+        </div>
       </Form>
-
-      <Link href="/">Forgot password?</Link>
-      <Link href="/register">Don't have an account?</Link>
     </>
   );
 };

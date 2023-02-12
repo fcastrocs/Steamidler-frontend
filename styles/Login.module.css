@@ -1,3 +1,39 @@
 .passwordValidation {
   color: white;
 }
+
+.submit{
+  background-color: var(--lightColor);
+  color: white;
+  padding: .5em .8em;
+  border-radius:20px;
+  border: 0px;
+}
+
+.submit:hover{
+  background-color: var(--darkColor);
+}
+
+.addon{
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+}
+
+.input{
+  background-color: white;
+  padding: .5em .8em;
+  border-radius:20px;
+}
+
+.formGroup{
+  background-color: var(--primaryColor);
+  padding: 30px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+
+.header{
+  font-size: 40px;
+  font-weight: 600;
+  color: white;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
