@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { Row, Button } from "react-bootstrap";
 import { removeLocalStorage, setLocalStorage } from "../../../commons";
-import { AuthTypeContext } from "../../../pages/dashboard/addaccount";
+import { AddSteamContext } from "../../../pages/dashboard/addaccount";
 import { WebSocketContext } from "../../WebSocketProvider";
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 
 export default function CancelButton(props: Props) {
   const ws = useContext(WebSocketContext);
-  const authTypeContext = useContext(AuthTypeContext);
+  const addSteamContext = useContext(AddSteamContext);
 
   async function cancel() {
     // setLoading(true);
@@ -28,7 +28,7 @@ export default function CancelButton(props: Props) {
         // add extra seconds to coutdown to account for network and processing
         setLocalStorage("ignoreLogonWasNotConfirmed", {}, props.countdown + 30);
       }
-      authTypeContext.setAuthType("");
+      addSteamContext.setAuthType("");
     });
 
     return () => {

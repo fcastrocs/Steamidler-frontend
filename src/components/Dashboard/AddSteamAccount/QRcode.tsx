@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { useState, useContext, useEffect } from "react";
 import { Row } from "react-bootstrap";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../commons";
+import { AddSteamContext } from "../../../pages/dashboard/addaccount";
 import { WebSocketContext } from "../../WebSocketProvider";
 import CancelButton from "./CancelButton";
 import ErrorHandler from "./ErrorHandler";
@@ -15,7 +15,7 @@ export default function QRCode() {
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout>();
-  const router = useRouter();
+  const addSteamContext = useContext(AddSteamContext);
 
   function reset() {
     setError("");
@@ -50,7 +50,8 @@ export default function QRCode() {
 
     ws.on("steamaccount/add", (data) => {
       if (data.success) {
-        router.push("/dashboard");
+        addSteamContext.setSuccess("Account added successfully.");
+        addSteamContext.setAuthType("");
       } else {
       }
     });
@@ -72,14 +73,15 @@ export default function QRCode() {
       setQrCode(data.message.qrCode);
     });
 
-    ws.on("steamaccount/confirmedByUser", () => removeLocalStorage("QRcode"));
-    ws.on("steamaccount/cancelConfirmation", () => removeLocalStorage("QRcode"));
+    ws.on("steamaccount/confirmedByUser", () => {
+      setLoading(true);
+      removeLocalStorage("QRcode");
+    });
 
     ws.on("error", (error) => {
       if (getLocalStorage("ignoreLogonWasNotConfirmed") && error.message === "LogonWasNotConfirmed") {
         return removeLocalStorage("ignoreLogonWasNotConfirmed");
       }
-
       reset();
       setError(error.message);
     });

@@ -3,6 +3,7 @@ import { useState, useContext, useEffect, SetStateAction, Dispatch } from "react
 import { Row, Form, InputGroup, Button } from "react-bootstrap";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../commons";
+import { AddSteamContext } from "../../../pages/dashboard/addaccount";
 import AlertMessage from "../../Alert";
 import { WebSocketContext } from "../../WebSocketProvider";
 import CancelButton from "./CancelButton";
@@ -15,10 +16,12 @@ export default function SteamGuardCode() {
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState(null);
   const ws = useContext(WebSocketContext);
+  const addSteamContext = useContext(AddSteamContext);
 
   function sendAdd() {
     setError("");
     setLoading(true);
+    addSteamContext.setSuccess("");
 
     ws?.send({
       type: "steamaccount/add",
@@ -71,7 +74,7 @@ export default function SteamGuardCode() {
     // load previous session
     const session = getLocalStorage("SteamGuardCode");
     if (session) {
-      session.confirmation.setConfirmation(session.confirmation);
+      setConfirmation(session.confirmation);
     }
 
     return () => {
@@ -154,6 +157,7 @@ function ShowConfirmation(props: {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout>();
   const [alert, setAlert] = useState("");
   const ws = useContext(WebSocketContext);
+  const addSteamContext = useContext(AddSteamContext);
   const router = useRouter();
 
   function setCountDownInterval(initial: number) {
@@ -183,7 +187,8 @@ function ShowConfirmation(props: {
 
     ws.on("steamaccount/add", (data) => {
       if (data.success) {
-        router.push("/dashboard");
+        addSteamContext.setSuccess("Account added successfully.");
+        addSteamContext.setAuthType("");
       } else {
       }
     });
