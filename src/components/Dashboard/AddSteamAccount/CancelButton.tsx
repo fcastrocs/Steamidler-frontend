@@ -14,7 +14,6 @@ export default function CancelButton(props: Props) {
   const authTypeContext = useContext(AuthTypeContext);
 
   async function cancel() {
-    console.log("here1");
     // setLoading(true);
     ws?.send({ type: "steamaccount/cancelConfirmation", body: { accountName: props.accountName } });
   }
@@ -23,7 +22,6 @@ export default function CancelButton(props: Props) {
     if (!ws) return;
 
     ws.on("steamaccount/cancelConfirmation", () => {
-      console.log("here2");
       removeLocalStorage("QRcode");
       removeLocalStorage("SteamGuardCode");
       if (props.countdown) {
