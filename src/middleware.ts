@@ -8,7 +8,6 @@ export function middleware(req: NextRequest) {
 
   // check if user has auth cookies
   if (cookies && cookies.get("access-token") && cookies.get("refresh-token")) {
-    console.log(req.url);
     if (req.url.includes("/login") || req.url.includes("/register")) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }

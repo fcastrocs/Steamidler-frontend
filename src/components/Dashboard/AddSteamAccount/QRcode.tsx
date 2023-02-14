@@ -1,16 +1,14 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState, useContext, useEffect } from "react";
-import { Row, Button } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../commons";
 import { WebSocketContext } from "../../WebSocketProvider";
+import CancelButton from "./CancelButton";
 import ErrorHandler from "./ErrorHandler";
 import { WaitingOnSteam } from "./WaitingOnSteam";
 
-type ChildProps = {
-  setAuthType: React.Dispatch<React.SetStateAction<"" | "QRcode" | "SteamGuardCode">>;
-};
-
-export default function QRCode(props: ChildProps) {
+export default function QRCode() {
   const [qrCode, setQrCode] = useState("");
   const ws = useContext(WebSocketContext);
   const [error, setError] = useState("");
@@ -34,6 +32,7 @@ export default function QRCode(props: ChildProps) {
       type: "steamaccount/add",
       body: {
         authType: "QRcode",
+        accountName: "",
       },
     });
   }
@@ -49,8 +48,6 @@ export default function QRCode(props: ChildProps) {
   useEffect(() => {
     if (!ws) return;
 
-    sendAdd();
-
     ws.on("steamaccount/add", (data) => {
       if (data.success) {
         router.push("/dashboard");
@@ -62,32 +59,53 @@ export default function QRCode(props: ChildProps) {
       if (data.message.timeoutSeconds) {
         setLoading(false);
         setCountDownInterval(data.message.timeoutSeconds);
+
+        // save session
+        setLocalStorage(
+          "QRcode",
+          {
+            qrCode: data.message.qrCode,
+          },
+          data.message.timeoutSeconds
+        );
       }
       setQrCode(data.message.qrCode);
     });
 
-    ws.on("steamaccount/confirmedByUser", (data) => {
-      clearInterval(intervalId);
-      setLoading(true);
-    });
+    ws.on("steamaccount/confirmedByUser", () => removeLocalStorage("QRcode"));
+    ws.on("steamaccount/cancelConfirmation", () => removeLocalStorage("QRcode"));
 
     ws.on("error", (error) => {
+      if (getLocalStorage("ignoreLogonWasNotConfirmed") && error.message === "LogonWasNotConfirmed") {
+        return removeLocalStorage("ignoreLogonWasNotConfirmed");
+      }
+
       reset();
       setError(error.message);
     });
 
+    const session = getLocalStorage("QRcode");
+    if (!session) {
+      sendAdd();
+    } else {
+      setCountDownInterval(session.remaining);
+      setQrCode(session.qrCode);
+      setLoading(false);
+    }
+
     return () => {
       if (ws) {
-        console.log("CLEARED LISTENERS");
-        ws.removeAllListeners("steamaccount/waitingForConfirmation");
-        ws.removeAllListeners("error");
         ws.removeAllListeners("steamaccount/add");
+        ws.removeAllListeners("steamaccount/waitingForConfirmation");
+        ws.removeAllListeners("steamaccount/confirmedByUser");
+        ws.removeAllListeners("steamaccount/cancelConfirmation");
+        ws.removeAllListeners("error");
       }
     };
-  }, []);
+  }, [ws]);
 
   if (error) {
-    return <ErrorHandler error={error} retryFunc={sendAdd} setAuthType={props.setAuthType} />;
+    return <ErrorHandler error={error} retryFunc={sendAdd} />;
   }
 
   if (loading) {
@@ -110,11 +128,7 @@ export default function QRCode(props: ChildProps) {
         </div>
       </Row>
 
-      <Row className={`mb-3 justify-content-center`} lg={2}>
-        <Button variant="secondary" onClick={() => props.setAuthType("")} size="lg">
-          Cancel
-        </Button>
-      </Row>
+      <CancelButton accountName="" countdown={countdown} />
     </>
   );
 }

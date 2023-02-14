@@ -10,6 +10,7 @@ export default class WS extends EventEmitter {
   }
 
   public send(message: { type: string; body?: any }) {
+    if (!message.body) message.body = {};
     this.ws.send(JSON.stringify(message));
   }
 
@@ -17,7 +18,13 @@ export default class WS extends EventEmitter {
     this.ws.addEventListener("message", (event) => {
       const res = JSON.parse(event.data);
       console.log(res);
-      this.emit(res.type, res);
+
+      // only emit if there is a listener
+      if (this.listeners(res.type).length) {
+        this.emit(res.type, res);
+      } else {
+        console.log("No ws listener for: ", res.type);
+      }
     });
   }
 
