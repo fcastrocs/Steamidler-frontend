@@ -102,8 +102,8 @@ const Register: NextPage = () => {
 
         <InputGroup className={`mb-3`}>
           <div>
-            <div>
-              <span>{username ? "✅" : "❌"}</span>
+            <div className="ps-3">
+              <span>{username ? "✅" : ""}</span>
               <span>3-12 characters long</span>
             </div>
           </div>
@@ -141,30 +141,30 @@ const Register: NextPage = () => {
         </InputGroup>
 
         <InputGroup className={`mb-3`}>
-          <div>
+          <div className="ps-3">
             <div>
-              <span>{passwordValidation[0] ? "✅" : "❌"}</span>
+              <span>{passwordValidation[0] ? "✅" : ""}</span>
               <span>8-32 characters long</span>
             </div>
             <div>
-              <span>{passwordValidation[1] ? "✅" : "❌"}</span>
-              <span>at least one digit</span>
+              <span>{passwordValidation[1] ? "✅" : ""}</span>
+              <span>At least one digit</span>
             </div>
             <div>
-              <span>{passwordValidation[2] ? "✅" : "❌"}</span>
-              <span>at least one lowercase letter</span>
+              <span>{passwordValidation[2] ? "✅" : ""}</span>
+              <span>At least one lowercase letter</span>
             </div>
             <div>
-              <span>{passwordValidation[3] ? "✅" : "❌"}</span>
-              <span>at least one uppercase letter</span>
+              <span>{passwordValidation[3] ? "✅" : ""}</span>
+              <span>At least one uppercase letter</span>
             </div>
             <div>
-              <span>{passwordValidation[4] ? "✅" : "❌"}</span>
-              <span>at least one special character</span>
+              <span>{passwordValidation[4] ? "✅" : ""}</span>
+              <span>At least one special character</span>
             </div>
             <div>
-              <span>{passwordValidation[5] ? "✅" : "❌"}</span>
-              <span>no spaces</span>
+              <span>{passwordValidation[5] ? "✅" : ""}</span>
+              <span>No spaces</span>
             </div>
           </div>
         </InputGroup>
@@ -195,7 +195,9 @@ const Register: NextPage = () => {
           <Button variant="primary" type="submit" className={`${styles.submit} mb-3`}>
             Sign up
           </Button>
-          <Link className={`text-center`} href="/login">Already have an account?</Link>
+          <Link className={`text-center`} href="/login">
+            Already have an account?
+          </Link>
         </div>
       </Form>
     </>
