@@ -52,13 +52,13 @@ h6 {
   margin: 0 !important;
 }
 
-a{
+a {
   text-decoration: none;
   color: rgba(255, 255, 255, 0.76);
 }
 
-a:hover{
-  color: white  ;
+a:hover {
+  color: white;
 }
 
 hr {
@@ -69,7 +69,10 @@ hr {
 @media only screen and (max-width: 1499px) {
 }
 
-
-/* .row{
+.row {
   border: solid 1px black !important;
-} */
+}
+
+.col {
+  border: solid 1px red !important;
+}
