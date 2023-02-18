@@ -8,7 +8,7 @@
 
 body {
   letter-spacing: 0.03rem;
-  background: linear-gradient(75deg, #5c7699 0%, #3c6496 100%) fixed;
+  background: linear-gradient(75deg, #485d78 0%, #2b476a 100%) fixed;
 }
 
 .container-fluid {
@@ -69,10 +69,10 @@ hr {
 @media only screen and (max-width: 1499px) {
 }
 
-.row {
+/* .row {
   border: solid 1px black !important;
 }
 
 .col {
   border: solid 1px red !important;
-}
+} */

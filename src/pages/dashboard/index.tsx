@@ -1,8 +1,7 @@
 import type { NextPage } from "next";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { Col, Container, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Container, Dropdown, DropdownButton, Row, Spinner } from "react-bootstrap";
 import { WebSocketContext } from "../../components/WebSocketProvider";
 
 const Dashboard: NextPage = () => {
@@ -48,31 +47,57 @@ const Dashboard: NextPage = () => {
 };
 
 function RenderAccounts(props: { steamAccounts: any[] }) {
+  const ws = useContext(WebSocketContext);
+
+  function login(accountName: string) {
+    ws?.send({ type: "steamaccount/login", body: { accountName } });
+  }
+
   return (
-    <Container fluid="md" className={`px-4 text-center`}>
-      <Row className={`mb-3`}>
-        <Col></Col>
-        <Col>Player name</Col>
-        <Col>Status</Col>
-        <Col>Farming</Col>
-        <Col>Idling</Col>
+    <Container fluid="md" className={`px-4`}>
+      <Row md={2}>
+        {props.steamAccounts.map((s) => {
+          return (
+            <Col className="d-flex justify-content-center" key={s._id}>
+              <Card style={{ width: "250px" }}>
+                <Card.Img variant="top" src={s.data.state.avatarString} width={250} height={250} />
+                <Card.Body>
+                  <Card.Title className={`text-center`}>{s.data.state.playerName}</Card.Title>
+                  <Row>{s.accountName}</Row>
+                  <Row>Status: {s.state.status}</Row>
+                  <Row>Farming: {s.data.farming ? "on" : "off"}</Row>
+                  <Row>Idling: {s.data.gamesIdsIdle ? "on" : "off"}</Row>
+                  <Row md={3} className={`mb-2`}>
+                    <Col className="d-flex justify-content-center">
+                      <Button variant="outline-primary">Idle</Button>
+                    </Col>
+                    <Col className="d-flex justify-content-center">
+                      <Button variant="outline-primary">Farm</Button>
+                    </Col>
+                    <Col className="d-flex justify-content-center">
+                      <Button variant="outline-primary">Trade</Button>
+                    </Col>
+                  </Row>
+                  <Row className="text-center">
+                    <DropdownButton id="dropdown-basic-button" title="Actions" variant="outline-primary">
+                      <Dropdown.Item
+                        onClick={() => {
+                          login(s.accountName);
+                        }}
+                      >
+                        Login
+                      </Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">Logout</Dropdown.Item>
+                      <Dropdown.Item href="#/action-2">Authenticate</Dropdown.Item>
+                      <Dropdown.Item href="#/action-3">Delete</Dropdown.Item>
+                    </DropdownButton>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+          );
+        })}
       </Row>
-      {props.steamAccounts.map((s) => {
-        return (
-          <Row key={s._id} className={`mb-1`}>
-            <Col>
-              <Image src={s.data.state.avatarString} alt="steam-avatar" width={80} height={80}></Image>
-            </Col>
-            <Col>
-              <Row>{s.data.state.playerName}</Row>
-              <Row>steam id</Row>
-            </Col>
-            <Col>{s.state.status}</Col>
-            <Col>Farming: {s.state.farming ? "On" : "Off"}</Col>
-            <Col>{s.state.gamesIdsIdle.length ? "On" : "Off"}</Col>
-          </Row>
-        );
-      })}
     </Container>
   );
 }

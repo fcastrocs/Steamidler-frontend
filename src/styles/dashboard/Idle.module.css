@@ -1,0 +1,12 @@
+.idling {
+  border: solid 4px #90ba3c;
+}
+
+.name-idling {
+  color: #90ba3c !important;
+  font-weight: bold;
+}
+
+.clickable {
+  cursor: pointer;
+}
