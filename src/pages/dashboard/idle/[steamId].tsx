@@ -2,34 +2,24 @@ import type { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { WebSocketContext } from "../../../components/WebSocketProvider";
 import styles from "../../../styles/dashboard/Idle.module.css";
 import _ from "underscore";
-import CustomSpinner from "../../../components/Spinner";
+import { SteamAccount } from "@machiavelli/steam-client";
+import { ToastContext } from "../../../components/ToastProvider";
 
 const Idle: NextPage = () => {
   const router = useRouter();
   const { steamId } = router.query;
   const ws = useContext(WebSocketContext);
-  const [s, setSteamAccount] = useState<any>();
-  const [games, setGames] = useState<any>();
-  const [gamesOriginal, setGamesOriginal] = useState<any>([]);
-  const [gameIdsIdling, setGameIdsIdling] = useState<number[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [s, setSteamAccount] = useState<SteamAccount>();
+  const [games, setGames] = useState<SteamAccount["data"]["games"]>([]);
+  const [gamesOriginal, setGamesOriginal] = useState<SteamAccount["data"]["games"]>([]);
+  const [gamesIdsIdle, setGamesIdsIdle] = useState<number[]>([]);
   const [btnDisabled, setBtnDisabled] = useState(true);
-
-  function resetAFterIdle(data: any) {
-    // sort to show idling games first
-    const tempGames = _.sortBy(games, (game) => {
-      return game.isIdling;
-    });
-    setGameIdsIdling(data.message.gameIdsIdling);
-    setGames([...tempGames]);
-    setGamesOriginal([...tempGames]);
-    setBtnDisabled(true);
-    setLoading(false);
-  }
+  const [forcePlay, setforcePlay] = useState(false);
+  const addToast = useContext(ToastContext);
 
   useEffect(() => {
     if (!ws) return;
@@ -37,25 +27,29 @@ const Idle: NextPage = () => {
     ws.send({ type: "steamaccount/get", body: { steamId } });
 
     ws.on("steamaccount/get", (data) => {
-      const steamAccount = data.message;
-      const gameIdsIdlingSet = new Set(steamAccount.state.gameIdsIdling);
+      const steamAccount = data.message as SteamAccount;
+      const gameIdsIdleSet = new Set(steamAccount.state.gamesIdsIdle);
 
       // set  idle property to games that are idling
       for (const game of steamAccount.data.games) {
-        if (gameIdsIdlingSet.has(game.gameid)) {
-          game.isIdling = true;
-        }
+        game.isIdling = gameIdsIdleSet.has(game.gameid);
       }
 
       // sort to show idling games first
-      const tempGames = _.sortBy(steamAccount.data.games, (game) => {
-        return game.isIdling;
-      });
+      const tempGames = _.sortBy(steamAccount.data.games, (game) => !game.isIdling);
 
       setSteamAccount(steamAccount);
       setGames(tempGames);
-      setGamesOriginal([...tempGames]);
-      setGameIdsIdling(steamAccount.state.gameIdsIdling);
+      setGamesOriginal(JSON.parse(JSON.stringify(tempGames)));
+      setGamesIdsIdle(steamAccount.state.gamesIdsIdle);
+    });
+
+    ws.on("steamaccount/idlegames", function (data) {
+      resetAFterdIle(data.message);
+    });
+
+    ws.on("error", (error) => {
+      return addToast(error.message);
     });
 
     return () => {
@@ -64,46 +58,71 @@ const Idle: NextPage = () => {
     };
   }, [ws]);
 
+  // change UI accordingly after game clicked
   function gameClicked(gameId: number) {
-    // set idling property to game
-    const index = _.findIndex(games, (game) => game.gameid === gameId);
-    let gamesCopy = JSON.parse(JSON.stringify(games));
-    gamesCopy[index].isIdling = !gamesCopy[index].isIdling;
+    setGames((games) => {
+      return games.map((game) => {
+        if (game.gameid === gameId) {
+          game.isIdling = !game.isIdling;
+        }
+        return game;
+      });
+    });
+  }
 
-    const difference = _.filter(gamesCopy, function (game) {
+  // execute restrictions
+  useEffect(() => {
+    const gamesIdling = _.reduce(games, (idling, game) => idling + +game.isIdling, 0);
+    if (gamesIdling >= 2) {
+      setBtnDisabled(true);
+      return addToast("Limit reached, you can only idle 2 games simultaneously.");
+    }
+
+    // only enable set idle btn if new idle differs from currentf
+    const difference = _.filter(games, function (game) {
       return !_.findWhere(gamesOriginal, game);
     });
 
-    if (difference.length) {
-      setBtnDisabled(false);
-    } else {
-      setBtnDisabled(true);
-    }
-
-    setGames(gamesCopy);
-  }
+    setBtnDisabled(!difference.length);
+  }, [games]);
 
   function setIdle() {
     // get gameIds of games that will idle
     const gameIds = games
-      .filter((game: any) => {
+      .filter((game) => {
         if (game.isIdling) return game.gameid;
       })
-      .map((game: any) => {
+      .map((game) => {
         return game.gameid;
       });
 
-    setBtnDisabled(false);
-    setLoading(true);
-    ws?.send({ type: "steamaccount/idlegames", body: { accountName: s.accountName, gameIds } });
-
-    ws?.on("steamaccount/idlegames", function (data) {
-      resetAFterIdle(data);
-    });
+    setBtnDisabled(true);
+    ws?.send({ type: "steamaccount/idlegames", body: { accountName: s?.accountName, gameIds, forcePlay } });
   }
 
-  if (!s || loading) {
-    return <CustomSpinner />;
+  function stopIdle() {
+    setGames((games) => {
+      return games.map((game) => {
+        game.isIdling = false;
+        return game;
+      });
+    });
+    ws?.send({ type: "steamaccount/idlegames", body: { accountName: s?.accountName, gameIds: [], forcePlay } });
+  }
+
+  function resetAFterdIle(account: SteamAccount) {
+    // sort to show idling games first
+    setGames((games) => {
+      const tempGames = _.sortBy(games, (game) => !game.isIdling);
+      setGamesOriginal(JSON.parse(JSON.stringify(tempGames)));
+      return tempGames;
+    });
+
+    setGamesIdsIdle(account.state.gamesIdsIdle);
+  }
+
+  function switchForceKickSession(e: any) {
+    setforcePlay(e.target.checked);
   }
 
   return (
@@ -111,12 +130,23 @@ const Idle: NextPage = () => {
       <Row>
         <h2 className="text-center">Select games to idle</h2>
       </Row>
-      <Row>Account: {s.accountName}</Row>
+      <Row>Account: {s?.accountName}</Row>
       <Row>Games: {games.length}</Row>
-      <Row>Games idling: {gameIdsIdling.length} / 30</Row>
+      <Row>Games idling: {gamesIdsIdle.length} / 30</Row>
+      <Form>
+        <Form.Check
+          type="switch"
+          label="Force kick other playing sessions"
+          className="m-3 px-3"
+          onClick={switchForceKickSession}
+        />
+      </Form>
       <Row className="my-2">
-        <Button onClick={setIdle} disabled={btnDisabled}>
+        <Button onClick={setIdle} disabled={btnDisabled} className={`mb-2`} variant="primary">
           Set Idle
+        </Button>
+        <Button onClick={stopIdle} disabled={!gamesIdsIdle.length} variant="danger">
+          Stop Idling
         </Button>
       </Row>
       <Row md={6} className="justify-content-center">

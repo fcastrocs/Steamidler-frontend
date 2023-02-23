@@ -61,11 +61,6 @@ a:hover {
   color: white;
 }
 
-hr {
-  border: var(--border);
-  background-color: var(--lightColor);
-}
-
 @media only screen and (max-width: 1499px) {
 }
 

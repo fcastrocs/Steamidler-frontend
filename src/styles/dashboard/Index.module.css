@@ -1,0 +1,53 @@
+.card {
+  color: rgb(40, 40, 40);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.borderonline {
+  border: solid 2px rgb(0, 153, 255);
+}
+
+.borderoffline {
+  border: solid 2px rgb(58, 58, 58);
+}
+
+.cardonline {
+  background-image: linear-gradient(to left bottom, #27abc0, #67abc8, #8fabc5, #a8aebd, #b4b4b4);
+}
+
+.cardoffline {
+  background-image: linear-gradient(to left bottom, #414141, #616161, #828282, #a5a5a5, #cacaca);
+}
+
+.textoverflow {
+  width: 210px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.status {
+  font-weight: bold;
+  color: white;
+  padding-block: 5px;
+  margin-inline: -16px;
+  letter-spacing: 2px;
+}
+
+.statusonline {
+  background-color: #5c84b3;
+}
+
+.statusoffline {
+  background-color: #4e4e4e;
+}
+
+.title {
+  color: black;
+  overflow: hidden;
+}
+
+.clickable {
+  cursor: pointer;
+}

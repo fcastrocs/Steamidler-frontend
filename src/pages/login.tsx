@@ -92,7 +92,7 @@ const Login: NextPage = () => {
         </div>
         <div className={`d-flex mt-3 flex-column text-center`}>
           <Link href="/">Forgot password?</Link>
-          <Link href="/register">Don't have an account?</Link>
+          <Link href="/register">Don&apos;t have an account?</Link>
         </div>
       </Form>
     </>
