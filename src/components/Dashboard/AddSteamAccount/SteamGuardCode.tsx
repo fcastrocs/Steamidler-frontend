@@ -5,7 +5,7 @@ import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../commons";
 import { AddSteamContext } from "../../../pages/dashboard/addaccount";
 import AlertMessage from "../../Alert";
-import { WebSocketContext } from "../../WebSocketProvider";
+import { WebSocketContext } from "../../../providers/WebSocketProvider";
 import CancelButton from "./CancelButton";
 import { WaitingOnSteam } from "./WaitingOnSteam";
 

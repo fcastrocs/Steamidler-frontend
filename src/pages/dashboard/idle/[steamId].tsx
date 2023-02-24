@@ -3,11 +3,11 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { WebSocketContext } from "../../../components/WebSocketProvider";
+import { WebSocketContext } from "../../../providers/WebSocketProvider";
 import styles from "../../../styles/dashboard/Idle.module.css";
 import _ from "underscore";
 import { SteamAccount } from "@machiavelli/steam-client";
-import { ToastContext } from "../../../components/ToastProvider";
+import { ToastContext } from "../../../providers/ToastProvider";
 
 const Idle: NextPage = () => {
   const router = useRouter();

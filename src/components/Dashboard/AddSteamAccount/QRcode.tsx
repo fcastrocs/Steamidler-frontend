@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { Row } from "react-bootstrap";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../commons";
 import { AddSteamContext } from "../../../pages/dashboard/addaccount";
-import { WebSocketContext } from "../../WebSocketProvider";
+import { WebSocketContext } from "../../../providers/WebSocketProvider";
 import CancelButton from "./CancelButton";
 import ErrorHandler from "./ErrorHandler";
 import { WaitingOnSteam } from "./WaitingOnSteam";

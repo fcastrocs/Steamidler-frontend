@@ -6,7 +6,7 @@ import { Alert, Button, Form, InputGroup } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { request } from "../commons";
-import { AuthContext } from "../components/AuthProvider";
+import { AuthContext } from "../providers/AuthProvider";
 import styles from "../styles/Login.module.css";
 
 const Login: NextPage = () => {

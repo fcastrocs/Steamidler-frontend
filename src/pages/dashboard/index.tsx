@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import SteamAccounts from "../../components/Dashboard/SteamAccount/SteamAccounts";
 import CustomSpinner from "../../components/Spinner";
-import { WebSocketContext } from "../../components/WebSocketProvider";
+import { WebSocketContext } from "../../providers/WebSocketProvider";
 
 type ContextType = {
   steamAccounts: SteamAccount[];

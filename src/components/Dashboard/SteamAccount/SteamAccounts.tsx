@@ -3,8 +3,8 @@ import React, { useContext, useState, useEffect, createContext, Dispatch, SetSta
 import { Container, Row, Card, OverlayTrigger, Tooltip, Col, Button, DropdownButton, Dropdown } from "react-bootstrap";
 import { DashboardContext } from "../../../pages/dashboard";
 import CustomSpinner from "../../Spinner";
-import { ToastContext } from "../../ToastProvider";
-import { WebSocketContext } from "../../WebSocketProvider";
+import { ToastContext } from "../../../providers/ToastProvider";
+import { WebSocketContext } from "../../../providers/WebSocketProvider";
 import styles from "../../../styles/dashboard/Index.module.css";
 import { SteamAccount } from "@machiavelli/steam-client";
 

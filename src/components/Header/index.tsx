@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { logout } from "../../commons";
 import { useRouter } from "next/router";
-import { AuthContext } from "../AuthProvider";
+import { AuthContext } from "../../providers/AuthProvider";
 
 function Header() {
   return (

@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { Row, Button } from "react-bootstrap";
 import { removeLocalStorage, setLocalStorage } from "../../../commons";
 import { AddSteamContext } from "../../../pages/dashboard/addaccount";
-import { WebSocketContext } from "../../WebSocketProvider";
+import { WebSocketContext } from "../../../providers/WebSocketProvider";
 
 type Props = {
   accountName?: string;

@@ -16,7 +16,7 @@ export async function request(method: string, url: string, json?: Object) {
     });
   } catch (error) {
     console.log(error);
-    throw new Error("Unexpected error occurred.");
+    throw error;
   }
 
   return await checkResponseStatus(res);
