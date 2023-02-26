@@ -1,6 +1,18 @@
 import { useRouter } from "next/router";
 import React, { useContext, useState, useEffect, createContext, Dispatch, SetStateAction } from "react";
-import { Container, Row, Card, OverlayTrigger, Tooltip, Col, Button, DropdownButton, Dropdown } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Card,
+  OverlayTrigger,
+  Tooltip,
+  Col,
+  Button,
+  DropdownButton,
+  Dropdown,
+  Modal,
+  Form,
+} from "react-bootstrap";
 import { DashboardContext } from "../../../pages/dashboard";
 import CustomSpinner from "../../Spinner";
 import { ToastContext } from "../../../providers/ToastProvider";
@@ -42,7 +54,7 @@ function SteamAccounts() {
   useEffect(() => {
     if (!ws) return;
 
-    ws.on("PersonaStateChanged", (data) => {
+    ws.on("steamaccount/personastatechanged", (data) => {
       const steamAccount = data.message as SteamAccount;
       updateAccount(steamAccount);
       addToast(`State changed for ${steamAccount.accountName}`);
@@ -51,6 +63,7 @@ function SteamAccounts() {
     ws.on("steamaccount/logout", (data) => {
       if (data.success) {
         updateAccount(data.message);
+        addToast("Logout successful.");
         setLoading(false);
       }
     });
@@ -58,6 +71,7 @@ function SteamAccounts() {
     ws.on("steamaccount/login", (data) => {
       if (data.success) {
         updateAccount(data.message);
+        addToast("Login successful.");
         setLoading(false);
       } else {
         addToast(data.message);
@@ -78,7 +92,7 @@ function SteamAccounts() {
       if (data.success) setLoading(false);
     });
 
-    ws.on("steamaccount/changeplayername", (data) => {
+    ws.on("steamclient/changeplayername", (data) => {
       if (data.success) setLoading(false);
     });
 
@@ -88,9 +102,12 @@ function SteamAccounts() {
     });
 
     return () => {
-      ws.removeAllListeners("PersonaStateChanged");
-      ws.removeAllListeners("steamaccount/login");
+      ws.removeAllListeners("steamaccount/personastatechanged");
       ws.removeAllListeners("steamaccount/logout");
+      ws.removeAllListeners("steamaccount/login");
+      ws.removeAllListeners("steamaccount/remove");
+      ws.removeAllListeners("steamweb/changeavatar");
+      ws.removeAllListeners("steamclient/changeplayername");
       ws.removeAllListeners("error");
     };
   }, [ws]);
@@ -109,8 +126,6 @@ function SteamAccounts() {
                 <Row>
                   <Avatar s={s} />
                 </Row>
-
-                {/* </OverlayTrigger> */}
 
                 <Card.Body className={`pt-0 d-flex flex-column`}>
                   {/* account status */}
@@ -159,7 +174,13 @@ function SteamAccounts() {
                               </Button>
                             </Col>
                             <Col className="d-flex justify-content-center">
-                              <Button variant="primary" size="sm">
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => {
+                                  router.push(`dashboard/farm/${s.steamId}`);
+                                }}
+                              >
                                 Farm
                               </Button>
                             </Col>
@@ -172,16 +193,23 @@ function SteamAccounts() {
                         </>
                       )}
 
-                      {/*  */}
-                      <Row>
-                        <Col className="d-flex justify-content-center align-items-center">
-                          <DropdownButton title="Actions" variant="primary" size="sm">
-                            <LogInBtn s={s} />
-                            <LogOutBtn s={s} />
-                            <AuthenticateBtn s={s} />
-                            <DeleteBtn s={s} />
+                      {/* Steamaccount buttons */}
+                      <Row md={2}>
+                        <DropdownButton title="Client" variant="primary" size="sm">
+                          <LogInBtn s={s} />
+                          <LogOutBtn s={s} />
+                          <AuthenticateBtn s={s} />
+                          <DeleteBtn s={s} />
+                          <hr />
+                          <Activatef2pGame s={s} />
+                          <ReedemCDKEY s={s} />
+                        </DropdownButton>
+
+                        {(s.state.status === "online" || s.state.status === "ingame") && (
+                          <DropdownButton title="Web" variant="primary" size="sm">
+                            <></>
                           </DropdownButton>
-                        </Col>
+                        )}
                       </Row>
                     </Row>
                   )}
@@ -384,6 +412,192 @@ function PlayerName(props: { s: SteamAccount }) {
         {props.s.data.state.playerName}
       </h6>
     </OverlayTrigger>
+  );
+}
+
+function Activatef2pGame(props: { s: SteamAccount }) {
+  const ws = useContext(WebSocketContext);
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const [appids, setAppids] = useState<number[]>([]);
+  const addToast = useContext(ToastContext);
+
+  const activate = () => {
+    setLoading(true);
+    ws?.send({ type: "steamclient/activatef2pgame", body: { accountName: props.s.accountName, appids } });
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value) {
+      return setAppids([]);
+    }
+
+    const ids = e.target.value
+      .split(",")
+      .filter((x) => {
+        x = x.trim();
+        if (!x.length) return false;
+        const number = Number(x);
+        console.log(number);
+        if (isNaN(number)) return false;
+        return true;
+      })
+      .map(Number);
+
+    setAppids(ids);
+  };
+
+  const reset = () => {
+    setAppids([]);
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    ws?.removeListener("error", reset);
+    ws?.removeAllListeners("steamclient/activatef2pgame");
+    setShow(false);
+  };
+
+  useEffect(() => {
+    if (!ws) return;
+
+    ws.on("steamclient/activatef2pgame", (data) => {
+      const games = data.message.games as SteamAccount["data"]["games"];
+      addToast(`Success. ${games.length} game(s) activated.`);
+      reset();
+    });
+
+    ws.on("error", reset);
+
+    return () => {
+      ws.removeListener("error", reset);
+      ws.removeAllListeners("steamclient/activatef2pgame");
+    };
+  }, [ws]);
+
+  return (
+    <>
+      <Dropdown.Item onClick={() => setShow(true)}>Activate F2P Game</Dropdown.Item>
+
+      <Modal show={show} backdrop="static" keyboard={false} data-backdrop="static">
+        <Modal.Header>
+          <Modal.Title>Activate Free to play Game</Modal.Title>
+        </Modal.Header>
+        <Container>
+          {loading && (
+            <Row className="d-flex justify-content-center mb-3">
+              <CustomSpinner />
+            </Row>
+          )}
+          {!loading && (
+            <>
+              <Modal.Body>
+                <Form>
+                  <Form.Group className="mb-3">
+                    <Form.Label>App Id</Form.Label>
+                    <Form.Control type="text" placeholder="example type 730 for csgo" onChange={onChange} />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={activate} disabled={!appids.length}>
+                  Activate
+                </Button>
+              </Modal.Footer>
+            </>
+          )}
+        </Container>
+      </Modal>
+    </>
+  );
+}
+
+function ReedemCDKEY(props: { s: SteamAccount }) {
+  const ws = useContext(WebSocketContext);
+  const [loading, setLoading] = useState(false);
+  const [show, setShow] = useState(false);
+  const [cdkey, setCdkey] = useState("");
+  const addToast = useContext(ToastContext);
+
+  const activate = () => {
+    setLoading(true);
+    ws?.send({ type: "steamclient/cdkeyredeem", body: { accountName: props.s.accountName, cdkey } });
+  };
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.value) return;
+    console.log(e.target.value);
+    setCdkey(e.target.value);
+  };
+
+  const reset = () => {
+    setCdkey("");
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    ws?.removeListener("error", reset);
+    ws?.removeAllListeners("steamclient/cdkeyredeem");
+    setShow(false);
+  };
+
+  useEffect(() => {
+    if (!ws) return;
+
+    ws.on("steamclient/cdkeyredeem", (data) => {
+      const games = data.message.games as SteamAccount["data"]["games"];
+      addToast(`Success. ${games.length} game(s) redeemed.`);
+      reset();
+    });
+
+    ws.on("error", reset);
+
+    return () => {
+      ws.removeListener("error", reset);
+      ws.removeAllListeners("steamclient/cdkeyredeem");
+    };
+  }, [ws]);
+
+  return (
+    <>
+      <Dropdown.Item onClick={() => setShow(true)}>Redeem CDKEY</Dropdown.Item>
+
+      <Modal show={show} backdrop="static" keyboard={false} data-backdrop="static">
+        <Modal.Header>
+          <Modal.Title>Redeem CDKEY</Modal.Title>
+        </Modal.Header>
+        <Container>
+          {loading && (
+            <Row className="d-flex justify-content-center mb-3">
+              <CustomSpinner />
+            </Row>
+          )}
+          {!loading && (
+            <>
+              <Modal.Body>
+                <Form>
+                  <Form.Group className="mb-3">
+                    <Form.Label>App Id</Form.Label>
+                    <Form.Control type="text" placeholder="example type 730 for csgo" onChange={onChange} />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                  Close
+                </Button>
+                <Button variant="primary" onClick={activate} disabled={!cdkey}>
+                  Activate
+                </Button>
+              </Modal.Footer>
+            </>
+          )}
+        </Container>
+      </Modal>
+    </>
   );
 }
 

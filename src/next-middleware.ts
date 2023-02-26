@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// middleware to check authenticationF
+// middleware to check authentication
 export function middleware(req: NextRequest) {
   const cookies = req.cookies;
 

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import WS from "../WebSocket";
 import { AuthContext } from "./AuthProvider";
 export const WebSocketContext = createContext<WS | null>(null);

@@ -8,17 +8,17 @@ import styles from "../../../styles/dashboard/Idle.module.css";
 import _ from "underscore";
 import { SteamAccount } from "@machiavelli/steam-client";
 import { ToastContext } from "../../../providers/ToastProvider";
+import { FarmableGame } from "@machiavelli/steam-web";
 
 const Idle: NextPage = () => {
   const router = useRouter();
   const { steamId } = router.query;
   const ws = useContext(WebSocketContext);
   const [s, setSteamAccount] = useState<SteamAccount>();
-  const [games, setGames] = useState<SteamAccount["data"]["games"]>([]);
-  const [gamesOriginal, setGamesOriginal] = useState<SteamAccount["data"]["games"]>([]);
-  const [gamesIdsIdle, setGamesIdsIdle] = useState<number[]>([]);
+  const [games, setGames] = useState<FarmableGame[]>([]);
+  const [gamesOriginal, setGamesOriginal] = useState<FarmableGame[]>([]);
+  const [gamesIdsFarm, setGamesIdsFarm] = useState<number[]>([]);
   const [btnDisabled, setBtnDisabled] = useState(true);
-  const [forcePlay, setforcePlay] = useState(false);
   const addToast = useContext(ToastContext);
 
   useEffect(() => {
@@ -28,24 +28,40 @@ const Idle: NextPage = () => {
 
     ws.on("steamaccount/get", (data) => {
       const steamAccount = data.message as SteamAccount;
-      const gameIdsIdleSet = new Set(steamAccount.state.gamesIdsIdle);
+      const gameIdsFarmSet = new Set(steamAccount.state.gamesIdsFarm);
+      const farmableGames = steamAccount.data.farmableGames;
 
-      // set  idle property to games that are idling
-      for (const game of steamAccount.data.games) {
-        game.isIdling = gameIdsIdleSet.has(game.gameid);
+      let tempGames = [];
+
+      for (const farmableGame of farmableGames) {
+        const game = _.find(steamAccount.data.games, (game) => game.gameid === farmableGame.appId);
+        farmableGame.isFarming = gameIdsFarmSet.has(farmableGame.appId);
+        tempGames.push({ ...farmableGame, ...game });
       }
 
       // sort to show idling games first
-      const tempGames = _.sortBy(steamAccount.data.games, (game) => !game.isIdling);
+      tempGames = _.sortBy(tempGames, (game) => !game.isFarming);
 
       setSteamAccount(steamAccount);
       setGames(tempGames);
       setGamesOriginal(JSON.parse(JSON.stringify(tempGames)));
-      setGamesIdsIdle(steamAccount.state.gamesIdsIdle);
+      setGamesIdsFarm(steamAccount.state.gamesIdsFarm);
     });
 
-    ws.on("steamclient/idlegames", function (data) {
-      resetAFterdIle(data.message);
+    ws.on("farming/start", function (data) {
+      resetAfterFarm(data.message.gameIds);
+      addToast("Success, farming started.");
+    });
+
+    ws.on("farming/stop", function () {
+      setGames((games) => {
+        return games.map((game) => {
+          game.isFarming = false;
+          return game;
+        });
+      });
+
+      addToast("Success, farming stopped.");
     });
 
     ws.on("error", (error) => {
@@ -54,7 +70,8 @@ const Idle: NextPage = () => {
 
     return () => {
       ws.removeAllListeners("steamaccount/get");
-      ws.removeAllListeners("steamclient/idlegames");
+      ws.removeAllListeners("farming/start");
+      ws.removeAllListeners("farming/stop");
       ws.removeAllListeners("error");
     };
   }, [ws]);
@@ -64,7 +81,7 @@ const Idle: NextPage = () => {
     setGames((games) => {
       return games.map((game) => {
         if (game.gameid === gameId) {
-          game.isIdling = !game.isIdling;
+          game.isFarming = !game.isFarming;
         }
         return game;
       });
@@ -73,10 +90,10 @@ const Idle: NextPage = () => {
 
   // execute restrictions
   useEffect(() => {
-    const gamesIdling = _.reduce(games, (idling, game) => idling + +game.isIdling, 0);
+    const gamesIdling = _.reduce(games, (idling, game) => idling + +game.isFarming, 0);
     if (gamesIdling >= 2) {
       setBtnDisabled(true);
-      return addToast("Limit reached, you can only idle 2 games simultaneously.");
+      return addToast("Limit reached, you can only farm 2 games simultaneously.");
     }
 
     // only enable set idle btn if new idle differs from currentf
@@ -87,71 +104,53 @@ const Idle: NextPage = () => {
     setBtnDisabled(!difference.length);
   }, [games]);
 
-  function setIdle() {
-    // get gameIds of games that will idle
+  function setFarm() {
+    // get gameIds of games that will farm
     const gameIds = games
       .filter((game) => {
-        if (game.isIdling) return game.gameid;
+        if (game.isFarming) return game.gameid;
       })
       .map((game) => {
         return game.gameid;
       });
 
     setBtnDisabled(true);
-    ws?.send({ type: "steamclient/idlegames", body: { accountName: s?.accountName, gameIds, forcePlay } });
+    ws?.send({ type: "farming/start", body: { accountName: s?.accountName, gameIds } });
   }
 
-  function stopIdle() {
-    setGames((games) => {
-      return games.map((game) => {
-        game.isIdling = false;
-        return game;
-      });
-    });
-    ws?.send({ type: "steamclient/idlegames", body: { accountName: s?.accountName, gameIds: [], forcePlay } });
+  function stopFarm() {
+    ws?.send({ type: "farming/stop", body: { accountName: s?.accountName, gameIds: [] } });
   }
 
-  function resetAFterdIle(account: SteamAccount) {
-    // sort to show idling games first
+  function resetAfterFarm(gameIds: number[]) {
+    // sort to show farming games first
     setGames((games) => {
-      const tempGames = _.sortBy(games, (game) => !game.isIdling);
+      const tempGames = _.sortBy(games, (game) => !game.isFarming);
       setGamesOriginal(JSON.parse(JSON.stringify(tempGames)));
       return tempGames;
     });
 
-    setGamesIdsIdle(account.state.gamesIdsIdle);
-  }
-
-  function switchForceKickSession(e: any) {
-    setforcePlay(e.target.checked);
+    setGamesIdsFarm(gameIds);
   }
 
   return (
     <Container>
       <Row>
-        <h2 className="text-center">Select games to idle</h2>
+        <h2 className="text-center">Select games to farm</h2>
       </Row>
       <Row>Account: {s?.accountName}</Row>
-      <Row>Games: {games.length}</Row>
-      <Row>Games idling: {gamesIdsIdle.length} / 30</Row>
-      <Form>
-        <Form.Check
-          type="switch"
-          label="Force kick other playing sessions"
-          className="m-3 px-3"
-          onClick={switchForceKickSession}
-        />
-      </Form>
+      <Row>Farmable games: {games.length}</Row>
+      <Row>Games farming: {gamesIdsFarm.length} / 30</Row>
       <Row className="my-2">
-        <Button onClick={setIdle} disabled={btnDisabled} className={`mb-2`} variant="primary">
-          Set Idle
+        <Button onClick={setFarm} disabled={btnDisabled} className={`mb-2`} variant="primary">
+          Set Farm
         </Button>
-        <Button onClick={stopIdle} disabled={!gamesIdsIdle.length} variant="danger">
-          Stop Idling
+        <Button onClick={stopFarm} disabled={!gamesIdsFarm.length} variant="danger">
+          Stop Farming
         </Button>
       </Row>
       <Row md={6} className="justify-content-center">
-        {games.map((game: any) => {
+        {games.map((game) => {
           return (
             <Col
               key={game.gameid}
@@ -161,14 +160,19 @@ const Idle: NextPage = () => {
               }}
             >
               <Image
-                className={`${game.isIdling ? styles.idling : ""}`}
+                className={`${game.isFarming ? styles.idling : ""}`}
                 src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.gameid}/header.jpg`}
                 alt="game-logo"
                 width={184}
                 height={69}
                 priority={game.gameid === 10}
               />
-              <Row className={`justify-content-center ${game.isIdling ? styles["name-idling"] : ""}`}>{game.name}</Row>
+              <Row className={`justify-content-center ${game.isFarming ? styles["name-idling"] : ""}`}>{game.name}</Row>
+              <Row className={`justify-content-center ${game.isFarming ? styles["name-idling"] : ""}`} md={1}>
+                <Col>Remaining cards: {game.remainingCards}</Col>
+                <Col>Dropped cards: {game.droppedCards}</Col>
+                <Col>Played time: {game.playTime} hrs</Col>
+              </Row>
             </Col>
           );
         })}
