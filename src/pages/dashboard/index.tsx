@@ -2,7 +2,7 @@ import { SteamAccount } from "@machiavelli/steam-client";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import SteamAccounts from "../../components/Dashboard/SteamAccount/SteamAccounts";
+import SteamAccounts from "../../components/Dashboard/SteamAccount";
 import CustomSpinner from "../../components/Spinner";
 import { WebSocketContext } from "../../providers/WebSocketProvider";
 

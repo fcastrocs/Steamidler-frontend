@@ -19,7 +19,7 @@
     "underscore": "^1.13.6"
   },
   "devDependencies": {
-    "@machiavelli/steam-client": "^1.0.47",
+    "@machiavelli/steam-client": "^1.0.48",
     "@machiavelli/steam-web": "^1.0.11",
     "@types/node": "18.13.0",
     "@types/react": "18.0.27",
