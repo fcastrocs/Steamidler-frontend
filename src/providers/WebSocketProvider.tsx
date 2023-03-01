@@ -19,7 +19,7 @@ function WebSocketProvider(props: { children: JSX.Element[] }) {
 
     // connect to WS
     if (auth.isLoggedIn) {
-      const tempWs = new WS(`ws://${domain}:8000`);
+      const tempWs = new WS(`ws${domain.includes("localhost") ? "" : "s"}://${domain}:8000`);
       tempWs.on("connected", () => setWs(tempWs));
     }
 
