@@ -8,6 +8,7 @@ declare module "@machiavelli/steam-client" {
   interface AccountData {
     farmableGames: FarmableGame[];
     items: Item[];
+    avatarFrame: string;
   }
 
   interface AccountState {

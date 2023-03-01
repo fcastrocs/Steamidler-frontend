@@ -18,6 +18,7 @@ import Activatef2pGame from "./Activatef2pGame";
 import ClearAliases from "./clearAliases";
 import ChangePrivacy from "./ChangePrivacy";
 import ChangeState from "./ChangeState";
+import ReloadAvatarFrame from "./ReloadAvatarFrame";
 
 type ContextType = Map<string, { loading: boolean; setLoading: React.Dispatch<React.SetStateAction<boolean>> }>;
 export const SteamAccountContext = createContext({} as ContextType);
@@ -76,6 +77,12 @@ function SteamAccounts() {
       } else {
         addToast(data.message);
       }
+    });
+
+    ws.on("steamweb/getavatarframe", (data) => {
+      const steamAccount = data.message as SteamAccount;
+      updateAccount(steamAccount);
+      addToast(`Account updated ${steamAccount.accountName}`);
     });
 
     ws.on("error", (error) => {
@@ -145,6 +152,15 @@ function SteamAccount(props: { s: SteamAccount }) {
       }
     });
 
+    ws.on("steamweb/getavatarframe", (data) => {
+      if (data.success) {
+        if ((data.message as SteamAccount).steamId !== props.s.steamId) {
+          return;
+        }
+        setLoading(false);
+      }
+    });
+
     ws.on("steamweb/changeavatar", (data) => {
       if (data.success) setLoading(false);
     });
@@ -167,7 +183,7 @@ function SteamAccount(props: { s: SteamAccount }) {
       style={{ width: "200px", height: "358px" }}
       className={`${styles[`card${props.s.state.status}`]} ${styles.card} ${
         styles[`border${props.s.state.status}`]
-      } mx-2`}
+      } mx-2 p-0`}
     >
       <Row>
         <Avatar s={props.s} />
@@ -263,6 +279,7 @@ function SteamAccount(props: { s: SteamAccount }) {
                 <DropdownButton title="Web" variant="primary" size="sm">
                   <ClearAliases s={props.s} />
                   <ChangePrivacy s={props.s} />
+                  <ReloadAvatarFrame s={props.s} />
                 </DropdownButton>
               )}
             </Row>

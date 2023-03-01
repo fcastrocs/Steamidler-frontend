@@ -59,10 +59,10 @@ export default function Avatar(props: { s: SteamAccount }) {
 
   return (
     <OverlayTrigger
-      overlay={<Tooltip style={{ position: "fixed" }}>Drag & Drop image or click to upload</Tooltip>}
+      overlay={<Tooltip style={{ position: "absolute" }}>Drag & Drop image or click to upload</Tooltip>}
       placement="bottom"
     >
-      <Col>
+      <Col style={{ height: "150px", width: "200px" }}>
         <input
           title=""
           type="file"
@@ -70,11 +70,22 @@ export default function Avatar(props: { s: SteamAccount }) {
           onChange={change}
           onDrop={drop}
           onDragOver={(e) => handleDragOver(e)}
-          className="mx-2"
-          style={{ height: "150px", position: "absolute", opacity: 0 }}
+          style={{ height: "150px", width: "200px", position: "absolute", opacity: 0, zIndex: 3 }}
           disabled={loading}
         />
-        <Card.Img src={props.s.data.state.avatarString} width={200} height={150} />
+        {props.s.data.avatarFrame && (
+          <Card.Img
+            src={props.s.data.avatarFrame}
+            height={180}
+            style={{ position: "absolute", zIndex: 2, width: "235px", left: "-21px", top: "-14px" }}
+          />
+        )}
+        <Card.Img
+          src={props.s.data.state.avatarString}
+          width={200}
+          height={150}
+          style={{ position: "absolute", zIndex: 1 }}
+        />
       </Col>
     </OverlayTrigger>
   );

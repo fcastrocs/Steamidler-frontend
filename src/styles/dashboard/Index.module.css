@@ -4,12 +4,20 @@
   letter-spacing: 1px;
 }
 
+.borderingame {
+  border: solid 2px rgb(6, 74, 9);
+}
+
 .borderonline {
   border: solid 2px rgb(0, 153, 255);
 }
 
 .borderoffline {
   border: solid 2px rgb(58, 58, 58);
+}
+
+.cardingame {
+  background-image: linear-gradient(to left bottom, #90ba3c, #67c874, #8fc590, #a8bda9, #b4b4b4);
 }
 
 .cardonline {
@@ -33,6 +41,12 @@
   padding-block: 5px;
   margin-inline: -16px;
   letter-spacing: 2px;
+  z-index: 2;
+  opacity: 0.85;
+}
+
+.statusingame {
+  background-color: #1a4519;
 }
 
 .statusonline {
