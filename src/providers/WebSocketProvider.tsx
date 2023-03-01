@@ -16,10 +16,11 @@ function WebSocketProvider(props: { children: JSX.Element[] }) {
 
   useEffect(() => {
     const domain = process.env.NEXT_PUBLIC_BACKEND_URL || "localhost";
+    const url = `ws${domain.includes("localhost") ? "" : "s"}://${domain}:8000`.replace("https//", "");
 
     // connect to WS
     if (auth.isLoggedIn) {
-      const tempWs = new WS(`ws${domain.includes("localhost") ? "" : "s"}://${domain}:8000`);
+      const tempWs = new WS(url);
       tempWs.on("connected", () => setWs(tempWs));
     }
 
