@@ -8,6 +8,8 @@ import styles from "../../../styles/dashboard/Idle.module.css";
 import _ from "underscore";
 import { SteamAccount } from "@machiavelli/steam-client";
 import { ToastContext } from "../../../providers/ToastProvider";
+import AlertMessage from "../../../components/Alert";
+import Spinner from "../../../components/Spinner";
 
 const Idle: NextPage = () => {
   const router = useRouter();
@@ -19,6 +21,7 @@ const Idle: NextPage = () => {
   const [gamesIdsIdle, setGamesIdsIdle] = useState<number[]>([]);
   const [btnDisabled, setBtnDisabled] = useState(true);
   const [forcePlay, setforcePlay] = useState(false);
+  const [loading, setLoading] = useState(true);
   const addToast = useContext(ToastContext);
 
   useEffect(() => {
@@ -44,8 +47,14 @@ const Idle: NextPage = () => {
       setGamesIdsIdle(steamAccount.state.gamesIdsIdle);
     });
 
-    ws.on("steamclient/idlegames", function (data) {
-      resetAFterdIle(data.message);
+    ws.on("steamclient/idlegames", (data) => {
+      const s = data.message as SteamAccount;
+      resetAFterdIle(s);
+      addToast(`Farming ${s.state.gamesIdsIdle.length ? "started." : "stopped."}`);
+    });
+
+    ws.on("farming/stop", (data) => {
+      setSteamAccount(data.message);
     });
 
     ws.on("error", (error) => {
@@ -55,6 +64,7 @@ const Idle: NextPage = () => {
     return () => {
       ws.removeAllListeners("steamaccount/get");
       ws.removeAllListeners("steamclient/idlegames");
+      ws.removeAllListeners("farming/stop");
       ws.removeAllListeners("error");
     };
   }, [ws]);
@@ -124,6 +134,27 @@ const Idle: NextPage = () => {
 
   function switchForceKickSession(e: any) {
     setforcePlay(e.target.checked);
+  }
+
+  function stopFarming() {
+    ws?.send({ type: "farming/stop", body: { accountName: s?.accountName, gameIds: [] } });
+  }
+
+  if (loading) {
+    return (
+      <Container style={{ height: "100vh" }} className="d-flex justify-content-center align-items-center">
+        <Spinner />;
+      </Container>
+    );
+  }
+
+  if (s && s.state.gamesIdsFarm.length) {
+    return (
+      <>
+        <AlertMessage message="You must stop farming before you can idle." variant="warning" />;
+        <Button onClick={stopFarming}>Stop Farming</Button>
+      </>
+    );
   }
 
   return (

@@ -15,7 +15,7 @@ function WebSocketProvider(props: { children: JSX.Element[] }) {
   }
 
   useEffect(() => {
-    const url = process.env.NEXT_PUBLIC_BACKEND_URL ? "wss://stage-api.steamidler.com" : "ws://localhost";
+    const url = process.env.NEXT_PUBLIC_BACKEND_URL ? "wss://stage-api.steamidler.com" : "ws://localhost:8000";
 
     // connect to WS
     if (auth.isLoggedIn) {

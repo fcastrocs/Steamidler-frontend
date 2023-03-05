@@ -32,15 +32,7 @@ export const checkResponseStatus = async (response: Response) => {
     return await response.json();
   }
 
-  if (response.status === 400 || response.status === 401) {
-    const error = await response.json();
-    console.log(error);
-    throw new Error((error as Error).message);
-  }
-
-  // something unexpected happended
-  console.log(response.statusText);
-  throw new Error("Unexpected error occurred.");
+  throw response;
 };
 
 export async function logout(setLoggedIn: Dispatch<SetStateAction<boolean>>) {

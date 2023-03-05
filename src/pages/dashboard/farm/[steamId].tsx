@@ -50,7 +50,7 @@ const Idle: NextPage = () => {
 
     ws.on("farming/start", function (data) {
       resetAfterFarm(data.message.gameIds);
-      addToast("Success, farming started.");
+      addToast("Farming started.");
     });
 
     ws.on("farming/stop", function () {
@@ -61,7 +61,7 @@ const Idle: NextPage = () => {
         });
       });
 
-      addToast("Success, farming stopped.");
+      addToast("Farming stopped.");
     });
 
     ws.on("error", (error) => {

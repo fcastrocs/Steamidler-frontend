@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { Spinner } from "react-bootstrap";
+import { Row, Spinner } from "react-bootstrap";
 
 const style: CSSProperties = {
   width: "1.5rem",
@@ -11,10 +11,10 @@ const style: CSSProperties = {
 
 export default function CustomSpinner() {
   return (
-    <>
+    <Row>
       <Spinner animation="grow" variant="primary" style={style} />
       <Spinner animation="grow" variant="primary" style={style} />
       <Spinner animation="grow" variant="primary" style={style} />
-    </>
+    </Row>
   );
 }

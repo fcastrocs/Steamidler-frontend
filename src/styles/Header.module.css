@@ -1,67 +1,78 @@
 /* Main header styles */
 .topHeader {
-  display: flex;
+  /* display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; */
   background-color: var(--darkColor);
-  padding: 5px 30px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
 
-.topHeaderBtn{
+.topHeaderBtn {
   text-decoration: none;
   margin-left: 20px;
 }
 
 /* Logo and text link */
-.logoBox{
+.logoBox {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-#textLink{
+#textLink {
   text-decoration: none;
   color: white;
 }
 
 /* Dashboard style */
-#dashboardLink{
+#dashboardLink {
   text-decoration: none;
   margin-right: 130px;
   color: rgba(255, 255, 255, 0.76);
 }
 
-#dashboardLink:hover{
+#dashboardLink:hover {
   color: rgb(255, 255, 255);
 }
 
-
 /* Login and signup box styles */
-.logContainer{
+.logContainer {
   display: flex;
   align-items: center;
 }
 
-#signUp{
+#signUp {
   background-color: var(--lightColor);
   color: white;
-  padding: .5em .8em;
-  border-radius:20px;
+  padding: 0.5em 0.8em;
+  border-radius: 20px;
 }
 
-#signUp:hover{
+#signUp:hover {
   background-color: var(--primaryColor);
 }
 
-#logIn{
+#logIn {
   color: rgba(255, 255, 255, 0.76);
 }
 
-#logIn:hover{
-  color: white  ;
+#logIn:hover {
+  color: white;
 }
 
+.profileDropDown {
+  all: initial;
+  color: white;
+}
 
+.profileDropDown::after {
+  content: none;
+}
 
+.profileDropDown:hover {
+  all: initial;
+}
 
+.profileDropDown:active {
+  all: initial !important;
+}

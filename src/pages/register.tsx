@@ -9,6 +9,7 @@ import { request } from "../commons";
 import styles from "../styles/Login.module.css";
 
 const Register: NextPage = () => {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [g_response, setRecaptchaResponse] = useState<string | null>("");
   const [username, setUsername] = useState("");
@@ -18,7 +19,7 @@ const Register: NextPage = () => {
   const [showPassword, setShowPassword] = useState("password");
   const recaptchaRef = React.createRef<ReCAPTCHA>();
   const [passwordValidation, setPasswordValidation] = useState([false, false, false, false, false, false]);
-  const router = useRouter();
+  const { invite } = router.query;
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,34 +40,28 @@ const Register: NextPage = () => {
   };
 
   const validatePassword = (password: string) => {
-    setPasswordValidation([false, false, false, false, false, false]);
-
     // Validate password
-    const validation = [...passwordValidation];
+    const validation = [false, false, false, false, false, false];
 
     // must be 8-32 characters long
-    validation[0] = /^.{8,32}$/.test(password) ? true : false;
+    validation[0] = /^.{8,32}$/.test(password);
     // at least one digit
-    validation[1] = /[0-9]/.test(password) ? true : false;
+    validation[1] = /[0-9]/.test(password);
     // at least one lowercase letter
-    validation[2] = /[a-z]/.test(password) ? true : false;
+    validation[2] = /[a-z]/.test(password);
     // at least one uppercase letter
-    validation[3] = /[A-Z]/.test(password) ? true : false;
+    validation[3] = /[A-Z]/.test(password);
     // at least special character
-    validation[4] = /[^A-Za-z0-9\s]/.test(password) ? true : false;
+    validation[4] = /[^A-Za-z0-9\s]/.test(password);
     // no spaces
-    validation[5] = /^\S*$/.test(password) ? true : false;
+    validation[5] = /^\S*$/.test(password);
 
-    setPasswordValidation(validation);
-
-    let isValid = false;
-    for (const value of passwordValidation) {
-      if (value === true) isValid = true;
-      else isValid = false;
-    }
+    const isValid = validation.every((v) => v);
 
     if (isValid) setPassword(password);
     else setPassword("");
+
+    setPasswordValidation(validation);
   };
 
   const validateUsername = (username: string) => {
@@ -180,6 +175,8 @@ const Register: NextPage = () => {
             placeholder="Invite Code"
             onChange={(e) => setInviteCode(e.target.value)}
             aria-describedby="invite-addon"
+            defaultValue={invite}
+            disabled={!!invite}
           />
         </InputGroup>
 

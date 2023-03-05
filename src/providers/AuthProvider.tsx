@@ -15,9 +15,11 @@ function AuthProvider(props: { children: JSX.Element }) {
         await request("GET", "user/verifyauth");
         setLoggedIn(true);
       } catch (error) {
-        addToast("The site is currently offline.");
-        setLoggedIn(false);
-        return;
+        const response = error as Response;
+        if (response.status !== 401) {
+          addToast("The site is currently offline.");
+          setLoggedIn(false);
+        }
       }
     }
 
