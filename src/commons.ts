@@ -4,36 +4,21 @@ import { Dispatch, SetStateAction } from "react";
  * wrap around fetch
  */
 export async function request(method: string, url: string, json?: Object) {
-  let res: Response;
-  try {
-    res = await fetch((process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/") + url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: json ? JSON.stringify(json) : null,
-    });
-  } catch (error) {
-    console.log(error);
-    throw error;
+  const res = await fetch((process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/") + url, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: json ? JSON.stringify(json) : null,
+  });
+
+  if (res.ok) {
+    return res.json();
   }
 
-  return await checkResponseStatus(res);
+  throw await res.json();
 }
-
-/**
- * Check response status
- */
-export const checkResponseStatus = async (response: Response) => {
-  // response is okay
-  if (response.ok) {
-    // response.status >= 200 && response.status < 300
-    return await response.json();
-  }
-
-  throw response;
-};
 
 export async function logout(setLoggedIn: Dispatch<SetStateAction<boolean>>) {
   await request("POST", "user/logout");
