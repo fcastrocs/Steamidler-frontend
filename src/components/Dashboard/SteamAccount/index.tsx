@@ -90,7 +90,6 @@ function SteamAccounts() {
     });
 
     return () => {
-      console.log("here");
       ws.removeAllListeners("steamaccount/personastatechanged");
       ws.removeAllListeners("steamaccount/logout");
       ws.removeAllListeners("steamaccount/login");

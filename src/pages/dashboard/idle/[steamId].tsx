@@ -45,6 +45,7 @@ const Idle: NextPage = () => {
       setGames(tempGames);
       setGamesOriginal(JSON.parse(JSON.stringify(tempGames)));
       setGamesIdsIdle(steamAccount.state.gamesIdsIdle);
+      setLoading(false);
     });
 
     ws.on("steamclient/idlegames", (data) => {

@@ -1,0 +1,25 @@
+.OK {
+  background-color: rgb(19, 194, 19);
+  max-width: 5px;
+  height: 50px;
+  border-radius: 4px;
+}
+
+.container {
+  background-color: rgb(255, 255, 255);
+  border-radius: 5px;
+  padding: 35px;
+  border: solid 1px black;
+}
+
+.box {
+  border: solid 1px rgb(172, 172, 172);
+  background-color: rgb(245, 245, 245);
+  border-radius: 5px;
+  margin: 10px;
+  padding: 15px;
+}
+
+.index{
+  border: solid  3px rgb(3, 82, 13);
+}

@@ -149,34 +149,39 @@ const Idle: NextPage = () => {
           Stop Farming
         </Button>
       </Row>
-      <Row md={6} className="justify-content-center">
-        {games.map((game) => {
-          return (
-            <Col
-              key={game.gameid}
-              className={`m-2 text-center ${styles.clickable}`}
-              onClick={() => {
-                gameClicked(game.gameid);
-              }}
-            >
-              <Image
-                className={`${game.isFarming ? styles.idling : ""}`}
-                src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.gameid}/header.jpg`}
-                alt="game-logo"
-                width={184}
-                height={69}
-                priority={game.gameid === 10}
-              />
-              <Row className={`justify-content-center ${game.isFarming ? styles["name-idling"] : ""}`}>{game.name}</Row>
-              <Row className={`justify-content-center ${game.isFarming ? styles["name-idling"] : ""}`} md={1}>
-                <Col>Remaining cards: {game.remainingCards}</Col>
-                <Col>Dropped cards: {game.droppedCards}</Col>
-                <Col>Played time: {game.playTime} hrs</Col>
-              </Row>
-            </Col>
-          );
-        })}
-      </Row>
+      {!games.length && <h4 className="text-center m-5">No games to farm.</h4>}
+      {!!games.length && (
+        <Row md={6} className="justify-content-center">
+          {games.map((game) => {
+            return (
+              <Col
+                key={game.gameid}
+                className={`m-2 text-center ${styles.clickable}`}
+                onClick={() => {
+                  gameClicked(game.gameid);
+                }}
+              >
+                <Image
+                  className={`${game.isFarming ? styles.idling : ""}`}
+                  src={`https://cdn.cloudflare.steamstatic.com/steam/apps/${game.gameid}/header.jpg`}
+                  alt="game-logo"
+                  width={184}
+                  height={69}
+                  priority={game.gameid === 10}
+                />
+                <Row className={`justify-content-center ${game.isFarming ? styles["name-idling"] : ""}`}>
+                  {game.name}
+                </Row>
+                <Row className={`justify-content-center ${game.isFarming ? styles["name-idling"] : ""}`} md={1}>
+                  <Col>Remaining cards: {game.remainingCards}</Col>
+                  <Col>Dropped cards: {game.droppedCards}</Col>
+                  <Col>Played time: {game.playTime} hrs</Col>
+                </Row>
+              </Col>
+            );
+          })}
+        </Row>
+      )}
     </Container>
   );
 };

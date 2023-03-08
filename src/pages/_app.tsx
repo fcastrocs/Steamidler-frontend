@@ -17,7 +17,7 @@ function App({ Component, pageProps }: AppProps) {
           <main>
             <Component />
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </WebSocketProvider>
       </AuthProvider>
     </ToastProvider>
