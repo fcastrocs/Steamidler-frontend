@@ -91,7 +91,7 @@ const Idle: NextPage = () => {
   // execute restrictions
   useEffect(() => {
     const gamesIdling = _.reduce(games, (idling, game) => idling + +game.isFarming, 0);
-    if (gamesIdling >= 2) {
+    if (gamesIdling >= 10) {
       setBtnDisabled(true);
       return addToast("Limit reached, you can only farm 2 games simultaneously.");
     }

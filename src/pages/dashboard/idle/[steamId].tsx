@@ -85,7 +85,7 @@ const Idle: NextPage = () => {
   // execute restrictions
   useEffect(() => {
     const gamesIdling = _.reduce(games, (idling, game) => idling + +game.isIdling, 0);
-    if (gamesIdling >= 2) {
+    if (gamesIdling >= 33) {
       setBtnDisabled(true);
       return addToast("Limit reached, you can only idle 2 games simultaneously.");
     }
