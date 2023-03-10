@@ -52,7 +52,7 @@ const Login: NextPage = () => {
     setLoading(true);
 
     try {
-      await request("POST", "user/finalizeLogin", { code });
+      await request("POST", "user/finalizelogin", { code });
       auth.setLoggedIn(true);
       router.push("/dashboard");
     } catch (error) {
