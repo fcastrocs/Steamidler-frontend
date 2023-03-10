@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction } from "react";
  * wrap around fetch
  */
 export async function request(method: string, url: string, json?: Object) {
-  const res = await fetch((process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/") + url, {
+  const res = await fetch((`https://${process.env.NEXT_PUBLIC_API_URL}/` || "http://localhost:8000/") + url, {
     method,
     headers: {
       "Content-Type": "application/json",
