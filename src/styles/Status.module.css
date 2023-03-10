@@ -1,8 +1,21 @@
+.status {
+  height: 50px;
+  margin: 2px;
+  min-width: 1px;
+  max-width: 1px;
+  padding: 3px;
+}
+
 .OK {
   background-color: rgb(19, 194, 19);
-  max-width: 5px;
-  height: 50px;
-  border-radius: 4px;
+}
+
+.BAD{
+  background-color: rgb(194, 19, 19);
+}
+
+.uptime {
+  margin-right: 62px !important;
 }
 
 .container {
@@ -20,6 +33,34 @@
   padding: 15px;
 }
 
-.index{
-  border: solid  3px rgb(3, 82, 13);
+.index {
+  border: solid 2px black;
+}
+
+.tab {
+  background-color: rgb(227, 227, 227);
+  padding-right: 10px;
+}
+
+@media only screen and (max-width: 577px) {
+  .container {
+    padding: 0;
+  }
+
+  .OK {
+    padding: 0.04em;
+    margin: 1px;
+  }
+
+  .box {
+    padding: 0px;
+  }
+
+  .index {
+    border: solid 1px black;
+  }
+
+  .uptime {
+    margin-right: unset !important;
+  }
 }

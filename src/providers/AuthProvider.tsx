@@ -12,7 +12,7 @@ function AuthProvider(props: { children: JSX.Element }) {
   useEffect(() => {
     async function verifyAuth() {
       try {
-        await request("GET", "user/verifyauth");
+        await request("POST", "user/verifyauth");
         setLoggedIn(true);
       } catch (error) {
         console.log(error);
