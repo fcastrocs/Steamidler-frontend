@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Button, Form, InputGroup } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { MdOutlineAccountCircle, MdOutlineMail, MdOutlineVpnKey, MdPassword } from "react-icons/md";
@@ -21,6 +21,11 @@ const Register: NextPage = () => {
   const [passwordValidation, setPasswordValidation] = useState([false, false, false, false, false, false]);
   const { invite } = router.query;
 
+  useEffect(() => {
+    if (!invite) return;
+    setInviteCode(invite as string);
+  }, [invite]);
+
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -30,7 +35,7 @@ const Register: NextPage = () => {
     }
 
     try {
-      const userInfo = await request("POST", "user/register", { username, email, password, g_response, inviteCode });
+      await request("POST", "user/register", { username, email, password, g_response, inviteCode });
       router.push("/dashboard");
     } catch (error) {
       // reset captcha
