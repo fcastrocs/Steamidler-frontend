@@ -3,8 +3,12 @@ import { Dispatch, SetStateAction } from "react";
 /**
  * wrap around fetch
  */
-export async function request(method: string, url: string, json?: Object) {
-  const res = await fetch((`https://${process.env.NEXT_PUBLIC_API_URL}/` || "http://localhost:8000/") + url, {
+export async function request(method: string, endpoint: string, json?: Object) {
+  const url = process.env.NEXT_PUBLIC_API_URL
+    ? `https://${process.env.NEXT_PUBLIC_API_URL}/`
+    : "http://localhost:8000/";
+
+  const res = await fetch(url + endpoint, {
     method,
     headers: {
       "Content-Type": "application/json",

@@ -31,16 +31,23 @@ const Idle: NextPage = () => {
       const gameIdsFarmSet = new Set(steamAccount.state.gamesIdsFarm);
       const farmableGames = steamAccount.data.farmableGames;
 
-      let tempGames = [];
+      const farmingGames = [];
+      let notFarmingGames = [];
 
       for (const farmableGame of farmableGames) {
         const game = _.find(steamAccount.data.games, (game) => game.gameid === farmableGame.appId);
         farmableGame.isFarming = gameIdsFarmSet.has(farmableGame.appId);
-        tempGames.push({ ...farmableGame, ...game });
+
+        if (farmableGame.isFarming) {
+          farmingGames.push({ ...farmableGame, ...game });
+        } else {
+          notFarmingGames.push({ ...farmableGame, ...game });
+        }
       }
 
       // sort to show idling games first
-      tempGames = _.sortBy(tempGames, (game) => !game.isFarming);
+      notFarmingGames = _.sortBy(notFarmingGames, (game) => game.name);
+      const tempGames = [...notFarmingGames, ...farmingGames];
 
       setSteamAccount(steamAccount);
       setGames(tempGames);

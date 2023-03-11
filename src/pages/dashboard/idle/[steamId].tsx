@@ -33,13 +33,22 @@ const Idle: NextPage = () => {
       const steamAccount = data.message as SteamAccount;
       const gameIdsIdleSet = new Set(steamAccount.state.gamesIdsIdle);
 
+      const idlingGames = [];
+      let notIdlingGames = [];
+
       // set  idle property to games that are idling
       for (const game of steamAccount.data.games) {
         game.isIdling = gameIdsIdleSet.has(game.gameid);
+        if (game.isIdling) {
+          idlingGames.push(game);
+        } else {
+          notIdlingGames.push(game);
+        }
       }
 
       // sort to show idling games first
-      const tempGames = _.sortBy(steamAccount.data.games, (game) => !game.isIdling);
+      notIdlingGames = _.sortBy(notIdlingGames, (game) => game.name);
+      const tempGames = [...idlingGames, ...notIdlingGames];
 
       setSteamAccount(steamAccount);
       setGames(tempGames);
@@ -51,7 +60,7 @@ const Idle: NextPage = () => {
     ws.on("steamclient/idlegames", (data) => {
       const s = data.message as SteamAccount;
       resetAFterdIle(s);
-      addToast(`Farming ${s.state.gamesIdsIdle.length ? "started." : "stopped."}`);
+      addToast(`Idling ${s.state.gamesIdsIdle.length ? "started." : "stopped."}`);
     });
 
     ws.on("farming/stop", (data) => {
