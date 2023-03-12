@@ -1,14 +1,16 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState, useContext, useEffect } from "react";
-import { Row } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../commons";
+import CancelConfirmation from "../../../components/Dashboard/AddSteamAccount/CancelConfimation";
+import ErrorHandler from "../../../components/Dashboard/AddSteamAccount/ErrorHandler";
+import { WaitingOnSteam } from "../../../components/Dashboard/AddSteamAccount/WaitingOnSteam";
 import { AddSteamContext } from "../../../pages/dashboard/addaccount";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
-import CancelButton from "./CancelButton";
-import ErrorHandler from "./ErrorHandler";
-import { WaitingOnSteam } from "./WaitingOnSteam";
 
 export default function QRCode() {
+  const router = useRouter();
   const [qrCode, setQrCode] = useState("");
   const ws = useContext(WebSocketContext);
   const [error, setError] = useState("");
@@ -56,7 +58,7 @@ export default function QRCode() {
       }
     });
 
-    ws.on("steamaccount/waitingForConfirmation", (data) => {
+    ws.on("steamaccount/waitingforconfirmation", (data) => {
       if (data.message.timeoutSeconds) {
         setLoading(false);
         setCountDownInterval(data.message.timeoutSeconds);
@@ -73,8 +75,9 @@ export default function QRCode() {
       setQrCode(data.message.qrCode);
     });
 
-    ws.on("steamaccount/confirmedByUser", () => {
+    ws.on("steamaccount/confirmed", () => {
       setLoading(true);
+      router.push("/dashboard");
       removeLocalStorage("QRcode");
     });
 
@@ -98,9 +101,9 @@ export default function QRCode() {
     return () => {
       if (ws) {
         ws.removeAllListeners("steamaccount/add");
-        ws.removeAllListeners("steamaccount/waitingForConfirmation");
-        ws.removeAllListeners("steamaccount/confirmedByUser");
-        ws.removeAllListeners("steamaccount/cancelConfirmation");
+        ws.removeAllListeners("steamaccount/waitingforconfirmation");
+        ws.removeAllListeners("steamaccount/confirmed");
+        ws.removeAllListeners("steamaccount/cancelconfirmation");
         ws.removeAllListeners("error");
       }
     };
@@ -115,13 +118,10 @@ export default function QRCode() {
   }
 
   return (
-    <>
+    <Container>
       <Row className={`mb-3 text-center`}>
-        <h6>Scan code with the Steam App</h6>
-      </Row>
-
-      <Row className={`mb-3 justify-content-center`} lg={2}>
-        <h6 className={`text-center`}>Timeout: {countdown} seconds</h6>
+        <h1>Scan code with the Steam App</h1>
+        <h5 className={`text-center`}>Timeout: {countdown} seconds</h5>
       </Row>
 
       <Row className={`mb-3 justify-content-center text-center`} lg={2}>
@@ -130,7 +130,7 @@ export default function QRCode() {
         </div>
       </Row>
 
-      <CancelButton accountName="" countdown={countdown} />
-    </>
+      <CancelConfirmation accountName="" countdown={countdown} />
+    </Container>
   );
 }

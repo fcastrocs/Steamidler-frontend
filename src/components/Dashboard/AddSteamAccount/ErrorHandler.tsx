@@ -1,6 +1,6 @@
 import { Button, Row } from "react-bootstrap";
 import AlertMessage from "../../Alert";
-import CancelButton from "./CancelButton";
+import CancelButton from "./CancelConfimation";
 
 type Props = {
   error: string;

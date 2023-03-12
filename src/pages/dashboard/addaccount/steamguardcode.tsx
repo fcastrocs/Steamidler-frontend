@@ -1,13 +1,12 @@
 import { useRouter } from "next/router";
 import { useState, useContext, useEffect, SetStateAction, Dispatch } from "react";
-import { Row, Form, InputGroup, Button } from "react-bootstrap";
+import { Row, Form, InputGroup, Button, Container } from "react-bootstrap";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../commons";
-import { AddSteamContext } from "../../../pages/dashboard/addaccount";
-import AlertMessage from "../../Alert";
+import AlertMessage from "../../../components/Alert";
+import CancelConfirmation from "../../../components/Dashboard/AddSteamAccount/CancelConfimation";
+import { WaitingOnSteam } from "../../../components/Dashboard/AddSteamAccount/WaitingOnSteam";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
-import CancelButton from "./CancelButton";
-import { WaitingOnSteam } from "./WaitingOnSteam";
 
 export default function SteamGuardCode() {
   const [accountName, setAccountName] = useState("");
@@ -16,12 +15,10 @@ export default function SteamGuardCode() {
   const [error, setError] = useState("");
   const [confirmation, setConfirmation] = useState(null);
   const ws = useContext(WebSocketContext);
-  const addSteamContext = useContext(AddSteamContext);
 
   function sendAdd() {
     setError("");
     setLoading(true);
-    addSteamContext.setSuccess("");
 
     ws?.send({
       type: "steamaccount/add",
@@ -44,7 +41,7 @@ export default function SteamGuardCode() {
   useEffect(() => {
     if (!ws) return;
 
-    ws.on("steamaccount/waitingForConfirmation", (data) => {
+    ws.on("steamaccount/waitingforconfirmation", (data) => {
       setLoading(false);
 
       setLocalStorage(
@@ -79,7 +76,7 @@ export default function SteamGuardCode() {
 
     return () => {
       if (ws) {
-        ws.removeAllListeners("steamaccount/waitingForConfirmation");
+        ws.removeAllListeners("steamaccount/waitingforconfirmation");
         ws.removeAllListeners("error");
       }
     };
@@ -90,7 +87,7 @@ export default function SteamGuardCode() {
   }
 
   return (
-    <>
+    <Container>
       {error && (
         <Row className={`mb-3 justify-content-center`} lg={2}>
           <AlertMessage message={error} variant={"danger"} />
@@ -101,8 +98,9 @@ export default function SteamGuardCode() {
       {!confirmation && (
         <>
           <Row className={`mb-3 text-center`}>
-            <h6>You can revoke access from within the Steam app</h6>
-            <h6>We do not save your password</h6>
+            <h1>Steam Account credentials</h1>
+            <h5 className="mt-3">You can revoke access from within the Steam app</h5>
+            <h5>We do not save your password</h5>
           </Row>
           <Row className={`mb-3 justify-content-center`} lg={2}>
             <Form onSubmit={formSubmit} className={`p-0`}>
@@ -141,7 +139,7 @@ export default function SteamGuardCode() {
           </Row>
         </>
       )}
-    </>
+    </Container>
   );
 }
 
@@ -157,7 +155,6 @@ function ShowConfirmation(props: {
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout>();
   const [alert, setAlert] = useState("");
   const ws = useContext(WebSocketContext);
-  const addSteamContext = useContext(AddSteamContext);
   const router = useRouter();
 
   function setCountDownInterval(initial: number) {
@@ -187,14 +184,16 @@ function ShowConfirmation(props: {
 
     ws.on("steamaccount/add", (data) => {
       if (data.success) {
-        addSteamContext.setSuccess("Account added successfully.");
-        addSteamContext.setAuthType("");
+        router.push("/dashboard");
       } else {
       }
     });
 
-    ws.on("steamaccount/confirmedByUser", () => removeLocalStorage("SteamGuardCode"));
-    ws.on("steamaccount/cancelConfirmation", () => removeLocalStorage("SteamGuardCode"));
+    ws.on("steamaccount/confirmed", () => {
+      router.push("/dashboard");
+      removeLocalStorage("SteamGuardCode");
+    });
+    ws.on("steamaccount/cancelconfirmation", () => removeLocalStorage("SteamGuardCode"));
 
     ws.on("error", (error) => {
       if (getLocalStorage("ignoreLogonWasNotConfirmed") && error.message === "LogonWasNotConfirmed") {
@@ -206,8 +205,8 @@ function ShowConfirmation(props: {
 
     return () => {
       ws.removeAllListeners("steamaccount/add");
-      ws.removeAllListeners("steamaccount/confirmedByUser");
-      ws.removeAllListeners("steamaccount/cancelConfirmation");
+      ws.removeAllListeners("steamaccount/confirmed");
+      ws.removeAllListeners("steamaccount/cancelconfirmation");
       ws.removeAllListeners("error");
     };
   }, [ws]);
@@ -235,9 +234,9 @@ function ShowConfirmation(props: {
   }
 
   return (
-    <>
+    <Container>
       <Row className={`mb-3 text-center`}>
-        <h6>Timeout: {countdown} seconds</h6>
+        <h5>Timeout: {countdown} seconds</h5>
       </Row>
       {alert && (
         <Row className={`mb-3 justify-content-center`} lg={2}>
@@ -268,7 +267,7 @@ function ShowConfirmation(props: {
           </Form>
         </Row>
       )}
-      <CancelButton accountName={props.accountName} countdown={countdown} />
-    </>
+      <CancelConfirmation accountName={props.accountName} countdown={countdown} />
+    </Container>
   );
 }

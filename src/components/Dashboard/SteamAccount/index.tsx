@@ -227,8 +227,12 @@ function SteamAccount(props: { s: SteamAccount }) {
             {/* actions buttons */}
             {(props.s.state.status === "online" || props.s.state.status === "ingame") && (
               <>
-                <Row>Farming: {props.s.state.gamesIdsFarm.length ? "on" : "off"}</Row>
-                <Row className="mb-1">Idling: {props.s.state.gamesIdsIdle.length ? "on" : "off"}</Row>
+                <Row>
+                  Farming: {props.s.state.gamesIdsFarm.length && props.s.state.status === "ingame" ? "on" : "off"}
+                </Row>
+                <Row className="mb-1">
+                  Idling: {props.s.state.gamesIdsIdle.length && props.s.state.status === "ingame" ? "on" : "off"}
+                </Row>
                 <Row md={3} className={`mb-2 gx-1`}>
                   <Col className="d-flex justify-content-center">
                     <Button

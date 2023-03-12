@@ -1,7 +1,11 @@
+/**
+ * Cancel steam confirmation
+ */
+
+import { useRouter } from "next/router";
 import { useContext, useEffect } from "react";
 import { Row, Button } from "react-bootstrap";
 import { removeLocalStorage, setLocalStorage } from "../../../commons";
-import { AddSteamContext } from "../../../pages/dashboard/addaccount";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
 
 type Props = {
@@ -9,30 +13,29 @@ type Props = {
   countdown?: number;
 };
 
-export default function CancelButton(props: Props) {
+export default function CancelConfirmation(props: Props) {
   const ws = useContext(WebSocketContext);
-  const addSteamContext = useContext(AddSteamContext);
+  const router = useRouter();
 
   async function cancel() {
-    // setLoading(true);
-    ws?.send({ type: "steamaccount/cancelConfirmation", body: { accountName: props.accountName } });
+    ws?.send({ type: "steamaccount/cancelconfirmation", body: { accountName: props.accountName } });
   }
 
   useEffect(() => {
     if (!ws) return;
 
-    ws.on("steamaccount/cancelConfirmation", () => {
+    ws.on("steamaccount/cancelconfirmation", () => {
       removeLocalStorage("QRcode");
       removeLocalStorage("SteamGuardCode");
       if (props.countdown) {
         // add extra seconds to coutdown to account for network and processing
         setLocalStorage("ignoreLogonWasNotConfirmed", {}, props.countdown + 30);
       }
-      addSteamContext.setAuthType("");
+      router.push("/dashboard/addaccount");
     });
 
     return () => {
-      ws.removeAllListeners("steamaccount/cancelConfirmation");
+      ws.removeAllListeners("steamaccount/cancelconfirmation");
     };
   }, [ws]);
 
