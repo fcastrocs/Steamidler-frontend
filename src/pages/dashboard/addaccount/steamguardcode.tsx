@@ -99,7 +99,11 @@ export default function SteamGuardCode() {
         <>
           <Row className={`mb-3 text-center`}>
             <h1>Steam Account credentials</h1>
-            <h5 className="mt-3">You can revoke access from within the Steam app</h5>
+            <h5 className="text-warning mt-3">
+              You only get 5 tries within 1 hour so that Steam doesn't rate limit us. <br /> This includes successful
+              and unsuccessful logins.
+            </h5>
+            <h5>You can revoke access from within the Steam app</h5>
             <h5>We do not save your password</h5>
           </Row>
           <Row className={`mb-3 justify-content-center`} lg={2}>

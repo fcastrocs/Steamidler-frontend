@@ -6,7 +6,6 @@ import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../c
 import CancelConfirmation from "../../../components/Dashboard/AddSteamAccount/CancelConfimation";
 import ErrorHandler from "../../../components/Dashboard/AddSteamAccount/ErrorHandler";
 import { WaitingOnSteam } from "../../../components/Dashboard/AddSteamAccount/WaitingOnSteam";
-import { AddSteamContext } from "../../../pages/dashboard/addaccount";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
 
 export default function QRCode() {
@@ -17,7 +16,6 @@ export default function QRCode() {
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout>();
-  const addSteamContext = useContext(AddSteamContext);
 
   function reset() {
     setError("");
@@ -52,8 +50,7 @@ export default function QRCode() {
 
     ws.on("steamaccount/add", (data) => {
       if (data.success) {
-        addSteamContext.setSuccess("Account added successfully.");
-        addSteamContext.setAuthType("");
+        router.push("/dashboard");
       } else {
       }
     });

@@ -1,11 +1,8 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import React, { useEffect, createContext } from "react";
+import React, { useEffect } from "react";
 import { Button, Container, Row } from "react-bootstrap";
 import { getLocalStorage } from "../../../commons";
-
-const AddSteamContext = createContext<AuthTypeContextType>({} as AuthTypeContextType);
-export { AddSteamContext };
 
 const AddSteamAccount: NextPage = () => {
   const router = useRouter();
