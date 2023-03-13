@@ -62,7 +62,7 @@ export default function Avatar(props: { s: SteamAccount }) {
       overlay={<Tooltip style={{ position: "absolute" }}>Drag & Drop image or click to upload</Tooltip>}
       placement="bottom"
     >
-      <Col style={{ height: "150px", width: "200px" }}>
+      <Col style={{ height: "180px" }} className="d-flex justify-content-center">
         <input
           title=""
           type="file"
@@ -70,21 +70,21 @@ export default function Avatar(props: { s: SteamAccount }) {
           onChange={change}
           onDrop={drop}
           onDragOver={(e) => handleDragOver(e)}
-          style={{ height: "150px", width: "200px", position: "absolute", opacity: 0, zIndex: 3 }}
+          style={{ position: "absolute", opacity: 0, zIndex: 3, height: "180px", width: "220px" }}
           disabled={loading}
         />
         {props.s.data.avatarFrame && (
           <Card.Img
             src={props.s.data.avatarFrame}
             height={180}
-            style={{ position: "absolute", zIndex: 2, width: "235px", left: "-21px", top: "-14px" }}
+            style={{ position: "absolute", zIndex: 2, width: "220px" }}
+            className="p-0 m-0"
           />
         )}
         <Card.Img
           src={props.s.data.state.avatarString}
-          width={200}
-          height={150}
-          style={{ position: "absolute", zIndex: 1 }}
+          height={148}
+          style={{ position: "absolute", zIndex: 1, top: "15px", left: "20px", width: "180px" }}
         />
       </Col>
     </OverlayTrigger>

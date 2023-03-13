@@ -179,23 +179,22 @@ function SteamAccount(props: { s: SteamAccount }) {
 
   return (
     <Card
-      style={{ width: "200px", height: "358px" }}
       className={`${styles[`card${props.s.state.status}`]} ${styles.card} ${
         styles[`border${props.s.state.status}`]
-      } mx-2 p-0`}
+      } p-0`}
     >
-      <Row>
+      <Row className="p-0 m-0">
         <Avatar s={props.s} />
       </Row>
 
-      <Card.Body className={`pt-0 d-flex flex-column`}>
+      <Card.Body className={`d-flex flex-column ${styles.cardbody}`}>
         {/* account status */}
         <Row className={`mb-1 ${styles.status} ${styles[`status${props.s.state.status}`]} justify-content-center`}>
           {props.s.state.status}
         </Row>
 
         {/* player name */}
-        <Row className="mb-1">
+        <Row className="mb-1 p-1">
           <PlayerName s={props.s} />
         </Row>
 
@@ -211,7 +210,7 @@ function SteamAccount(props: { s: SteamAccount }) {
           </div>
         </Row>
 
-        <hr className="m-0 p-0" />
+        <hr className="m-0 p-1" />
 
         {/* loading spinner */}
         {loading && (
@@ -222,17 +221,19 @@ function SteamAccount(props: { s: SteamAccount }) {
 
         {!loading && (
           <Row className="justify-content-center flex-grow-1">
-            {/* farming and idling status */}
-
-            {/* actions buttons */}
             {(props.s.state.status === "online" || props.s.state.status === "ingame") && (
               <>
+                {/* farming and idling status */}
                 <Row>
                   Farming: {props.s.state.gamesIdsFarm.length && props.s.state.status === "ingame" ? "on" : "off"}
                 </Row>
                 <Row className="mb-1">
                   Idling: {props.s.state.gamesIdsIdle.length && props.s.state.status === "ingame" ? "on" : "off"}
                 </Row>
+
+                <hr className="m-0 p-1" />
+
+                {/* actions buttons */}
                 <Row md={3} className={`mb-2 gx-1`}>
                   <Col className="d-flex justify-content-center">
                     <Button

@@ -11,7 +11,7 @@ const style: CSSProperties = {
 
 export default function CustomSpinner() {
   return (
-    <Row>
+    <Row className="d-flex justify-content-center">
       <Spinner animation="grow" variant="primary" style={style} />
       <Spinner animation="grow" variant="primary" style={style} />
       <Spinner animation="grow" variant="primary" style={style} />

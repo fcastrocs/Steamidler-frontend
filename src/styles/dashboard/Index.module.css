@@ -2,6 +2,7 @@
   color: rgb(40, 40, 40);
   font-size: 14px;
   letter-spacing: 1px;
+  width: 220px;
 }
 
 .borderingame {
@@ -39,10 +40,14 @@
   font-weight: bold;
   color: white;
   padding-block: 5px;
-  margin-inline: -16px;
   letter-spacing: 2px;
   z-index: 2;
   opacity: 0.85;
+}
+
+.cardbody{
+  padding: 10px !important;
+  padding-top: 0 !important;
 }
 
 .statusingame {

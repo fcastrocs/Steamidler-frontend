@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext, useState } from "react";
-import { Alert, Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
+import { Alert, Button, Container, Form, InputGroup, Row } from "react-bootstrap";
 import ReCAPTCHA from "react-google-recaptcha";
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { request } from "../commons";
