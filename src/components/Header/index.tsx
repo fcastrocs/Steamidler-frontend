@@ -5,7 +5,7 @@ import Link from "next/link";
 import { logout } from "../../commons";
 import { useRouter } from "next/router";
 import { AuthContext } from "../../providers/AuthProvider";
-import { Button, Col, Container, Dropdown, Row } from "react-bootstrap";
+import { Col, Container, Dropdown, Nav, Navbar } from "react-bootstrap";
 import { VscAccount } from "react-icons/vsc";
 
 function Header() {
@@ -17,32 +17,47 @@ function Header() {
 }
 
 function TopHeader() {
-  const router = useRouter();
   const auth = useContext(AuthContext);
 
   return (
-    <Container className={styles.topHeader} fluid>
-      <Col className="d-flex align-items-center mx-3 p-1">
-        <Link href="/" className="d-flex align-items-center justify-content-start">
-          <Image className={styles.logo} src="/android-chrome-192x192.png" alt="icon" width={50} height={50} />
-          <h5 className="mx-3">SteamIdler.com</h5>
-        </Link>
-        <Col className="d-flex justify-content-end">
-          {auth.isLoggedIn && <Profile />} {!auth.isLoggedIn && <NotLoggedIn />}
-        </Col>
-      </Col>
-    </Container>
+    <Navbar expand="lg" fixed="top" className={styles.navbar}>
+      <Container fluid>
+        <Navbar.Brand>
+          <Link href="/" className="d-flex align-items-center">
+            <Image src="/android-chrome-192x192.png" alt="icon" width={35} height={35} />
+            <h6 className={`mx-2 ${styles.link}`}> Steamidler</h6>
+          </Link>
+        </Navbar.Brand>
+        <Navbar.Toggle className={styles.toggleIcon} />
+        <Navbar.Collapse>
+          <Nav className={`d-flex ${styles.navLinksAlignment}`}>
+            {auth.isLoggedIn && (
+              <>
+                <Link href="/dashboard" className={`m-1`}>
+                  <h6 className={styles.link}>Dashboard</h6>
+                </Link>
+                <Link href="/status" className={`m-1`}>
+                  <h6 className={styles.link}>Status</h6>
+                </Link>
+                {<Profile />}
+              </>
+            )}
+            {!auth.isLoggedIn && <NotLoggedIn />}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }
 
 function NotLoggedIn() {
   return (
-    <Col className="d-flex justify-content-end align-items-center">
-      <Link className={styles.topHeaderBtn} id={styles.logIn} href="/login">
-        Login
+    <Col className={`d-flex ${styles.profileBtnMobileAlign} ${styles.notLoggedBtns}`}>
+      <Link href="/login">
+        <h6 className={`p-2 ${styles.linkTransform} ${styles.link}`}>Login</h6>
       </Link>
-      <Link className={styles.topHeaderBtn} id={styles.signUp} href="/register">
-        Sign Up
+      <Link href="/register">
+        <h6 className={`p-2 ${styles.linkTransform} ${styles.link}`}>Sign Up</h6>
       </Link>
     </Col>
   );
@@ -53,30 +68,48 @@ function Profile() {
   const router = useRouter();
 
   return (
-    <Dropdown>
-      <Dropdown.Toggle className={styles.profileDropDown}>
-        <VscAccount style={{ fontSize: "30px", color: "white" }} />
-      </Dropdown.Toggle>
+    <Col className={`d-flex ${styles.profileBtnMobileAlign}`}>
+      <Dropdown align={"end"} className={`${styles.profileDropDownMobileHide}`}>
+        <Dropdown.Toggle className={`${styles.profileDropDown}`}>
+          <VscAccount style={{ fontSize: "30px", color: "white" }} />
+        </Dropdown.Toggle>
 
-      <Dropdown.Menu>
-        <Dropdown.Item
-          onClick={() => {
-            router.push("/me");
-          }}
-        >
-          Profile
-        </Dropdown.Item>
-        <hr className="p-0 m-0" />
-        <Dropdown.Item
+        <Dropdown.Menu>
+          <Dropdown.Item
+            onClick={() => {
+              router.push("/me");
+            }}
+          >
+            Profile
+          </Dropdown.Item>
+          <hr className="p-0 m-0" />
+          <Dropdown.Item
+            onClick={() => {
+              logout(auth.setLoggedIn);
+              router.push("/");
+            }}
+          >
+            Logout
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+
+      <Col className={`mx-2 ${styles.profileLinks}`}>
+        <hr />
+        <Link href="/me">
+          <h6 className={`mb-2 ${styles.link}`}>Profile</h6>
+        </Link>
+
+        <h6
           onClick={() => {
             logout(auth.setLoggedIn);
-            router.push("/");
           }}
+          className={`mb-2 ${styles.link}`}
         >
-          Logout
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+          Log out
+        </h6>
+      </Col>
+    </Col>
   );
 }
 

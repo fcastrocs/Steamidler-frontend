@@ -1,65 +1,4 @@
 /* Main header styles */
-.topHeader {
-  /* display: flex;
-  justify-content: space-between;
-  align-items: center; */
-  background-color: var(--darkColor);
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-}
-
-.topHeaderBtn {
-  text-decoration: none;
-  margin-left: 20px;
-}
-
-/* Logo and text link */
-.logoBox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#textLink {
-  text-decoration: none;
-  color: white;
-}
-
-/* Dashboard style */
-#dashboardLink {
-  text-decoration: none;
-  margin-right: 130px;
-  color: rgba(255, 255, 255, 0.76);
-}
-
-#dashboardLink:hover {
-  color: rgb(255, 255, 255);
-}
-
-/* Login and signup box styles */
-.logContainer {
-  display: flex;
-  align-items: center;
-}
-
-#signUp {
-  background-color: var(--lightColor);
-  color: white;
-  padding: 0.5em 0.8em;
-  border-radius: 20px;
-}
-
-#signUp:hover {
-  background-color: var(--primaryColor);
-}
-
-#logIn {
-  color: rgba(255, 255, 255, 0.76);
-}
-
-#logIn:hover {
-  color: white;
-}
-
 .profileDropDown {
   all: initial;
   color: white;
@@ -75,4 +14,66 @@
 
 .profileDropDown:active {
   all: initial !important;
+}
+
+.profileBtnMobileAlign {
+  justify-content: end;
+}
+
+.link{
+  color: rgb(209, 209, 209);
+}
+
+.link:hover {
+  color: white;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.navbar {
+  padding: 0;
+  background-color: rgba(45, 30, 69, 0.75) !important;
+  border-bottom: solid 1px rgb(0, 0, 0);
+}
+
+.navLinksAlignment {
+  align-items: center;
+  width: 100%;
+}
+
+.profileLinks {
+  display: none;
+}
+
+.toggleIcon {
+  color: blue !important;
+  background-color: white;
+}
+
+.linkTransform:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+@media only screen and (max-width: 990px) {
+  .navLinksAlignment {
+    align-items: unset;
+    margin-top: 5px;
+  }
+
+  .profileBtnMobileAlign {
+    justify-content: start;
+  }
+
+  .profileDropDownMobileHide {
+    display: none;
+  }
+
+  .profileLinks {
+    display: inline;
+  }
+
+  .notLoggedBtns {
+    flex-direction: column;
+  }
 }
