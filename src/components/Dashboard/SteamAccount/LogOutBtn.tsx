@@ -1,4 +1,4 @@
-import { SteamAccount } from "@machiavelli/steam-client";
+import { SteamAccount } from "@fcastrocs/steamclient";
 import { Dispatch, SetStateAction, useContext } from "react";
 import { Dropdown } from "react-bootstrap";
 import { SteamAccountContext } from ".";

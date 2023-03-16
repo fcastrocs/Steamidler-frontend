@@ -1,4 +1,4 @@
-import { SteamAccount } from "@machiavelli/steam-client";
+import { SteamAccount } from "@fcastrocs/steamclient";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";

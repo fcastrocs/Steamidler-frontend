@@ -1,4 +1,4 @@
-import { SteamAccount } from "@machiavelli/steam-client";
+import { SteamAccount } from "@fcastrocs/steamclient";
 import { useContext, useEffect, useState } from "react";
 import { Button, Container, Dropdown, Form, Modal, Row } from "react-bootstrap";
 import { ToastContext } from "../../../providers/ToastProvider";

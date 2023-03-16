@@ -6,7 +6,7 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
 import styles from "../../../styles/dashboard/Idle.module.css";
 import _ from "underscore";
-import { SteamAccount } from "@machiavelli/steam-client";
+import { SteamAccount } from "@fcastrocs/steamclient";
 import { ToastContext } from "../../../providers/ToastProvider";
 import AlertMessage from "../../../components/Alert";
 import Spinner from "../../../components/Spinner";

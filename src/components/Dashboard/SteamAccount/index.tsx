@@ -6,7 +6,7 @@ import CustomSpinner from "../../Spinner";
 import { ToastContext } from "../../../providers/ToastProvider";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
 import styles from "../../../styles/dashboard/Index.module.css";
-import { SteamAccount } from "@machiavelli/steam-client";
+import { SteamAccount } from "@fcastrocs/steamclient";
 import LogInBtn from "./LogInBtn";
 import LogOutBtn from "./LogOutBtn";
 import AuthenticateBtn from "./AuthenticateBtn";

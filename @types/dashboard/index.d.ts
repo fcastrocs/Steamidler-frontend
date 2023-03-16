@@ -1,6 +1,6 @@
-import { FarmableGame, Item } from "@machiavelli/steam-web";
+import { FarmableGame, Item } from "@fcastrocs/steamweb";
 
-declare module "@machiavelli/steam-client" {
+declare module "@fcastrocs/steamclient" {
   interface Game {
     isIdling: boolean;
   }
