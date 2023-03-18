@@ -6,6 +6,7 @@ import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../c
 import CancelConfirmation from "../../../components/Dashboard/AddSteamAccount/CancelConfimation";
 import ErrorHandler from "../../../components/Dashboard/AddSteamAccount/ErrorHandler";
 import { WaitingOnSteam } from "../../../components/Dashboard/AddSteamAccount/WaitingOnSteam";
+import { ToastContext } from "../../../providers/ToastProvider";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
 
 export default function QRCode() {
@@ -16,6 +17,7 @@ export default function QRCode() {
   const [loading, setLoading] = useState(true);
   const [countdown, setCountdown] = useState(0);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout>();
+  const addToast = useContext(ToastContext);
 
   function reset() {
     setError("");
@@ -50,8 +52,10 @@ export default function QRCode() {
 
     ws.on("steamaccount/add", (data) => {
       if (data.success) {
+        removeLocalStorage("QRcode");
         router.push("/dashboard");
       } else {
+        addToast(data.message);
       }
     });
 
@@ -73,9 +77,7 @@ export default function QRCode() {
     });
 
     ws.on("steamaccount/confirmed", () => {
-      setLoading(true);
-      router.push("/dashboard");
-      removeLocalStorage("QRcode");
+      addToast("Steam Guard confirmed.");
     });
 
     ws.on("error", (error) => {

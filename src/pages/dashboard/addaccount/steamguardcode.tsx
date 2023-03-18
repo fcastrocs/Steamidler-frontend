@@ -6,6 +6,7 @@ import { getLocalStorage, removeLocalStorage, setLocalStorage } from "../../../c
 import AlertMessage from "../../../components/Alert";
 import CancelConfirmation from "../../../components/Dashboard/AddSteamAccount/CancelConfimation";
 import { WaitingOnSteam } from "../../../components/Dashboard/AddSteamAccount/WaitingOnSteam";
+import { ToastContext } from "../../../providers/ToastProvider";
 import { WebSocketContext } from "../../../providers/WebSocketProvider";
 
 export default function SteamGuardCode() {
@@ -100,8 +101,8 @@ export default function SteamGuardCode() {
           <Row className={`mb-3 text-center`}>
             <h1>Steam Account credentials</h1>
             <h5 className="text-warning mt-3">
-              You only get 5 tries within 1 hour so that Steam doesn&apos;t rate limit us. <br /> This includes successful
-              and unsuccessful logins.
+              You only get 5 tries within 1 hour so that Steam doesn&apos;t rate limit us. <br /> This includes
+              successful and unsuccessful logins.
             </h5>
             <h5>You can revoke access from within the Steam app</h5>
             <h5>We do not save your password</h5>
@@ -160,6 +161,7 @@ function ShowConfirmation(props: {
   const [alert, setAlert] = useState("");
   const ws = useContext(WebSocketContext);
   const router = useRouter();
+  const addToast = useContext(ToastContext);
 
   function setCountDownInterval(initial: number) {
     let counter = initial - 1;
@@ -188,15 +190,17 @@ function ShowConfirmation(props: {
 
     ws.on("steamaccount/add", (data) => {
       if (data.success) {
+        removeLocalStorage("SteamGuardCode");
         router.push("/dashboard");
       } else {
+        addToast(data.message);
       }
     });
 
     ws.on("steamaccount/confirmed", () => {
-      router.push("/dashboard");
-      removeLocalStorage("SteamGuardCode");
+      addToast("Steam Guard confirmed.");
     });
+
     ws.on("steamaccount/cancelconfirmation", () => removeLocalStorage("SteamGuardCode"));
 
     ws.on("error", (error) => {
@@ -224,7 +228,7 @@ function ShowConfirmation(props: {
     setLoading(true);
 
     ws?.send({
-      type: "steamaccount/updateWithSteamGuardCode",
+      type: "steamaccount/updatewithsteamguardcode",
       body: {
         code: guardCode,
         guardType: guardType,

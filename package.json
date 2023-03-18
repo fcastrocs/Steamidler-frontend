@@ -23,7 +23,7 @@
     "underscore": "^1.13.6"
   },
   "devDependencies": {
-    "@fcastrocs/steamclient": "^1.0.13",
+    "@fcastrocs/steamclient": "^1.0.14",
     "@fcastrocs/steamweb": "^1.0.0",
     "@types/node": "18.13.0",
     "@types/react": "18.0.27",
