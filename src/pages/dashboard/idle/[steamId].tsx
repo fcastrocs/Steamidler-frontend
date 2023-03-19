@@ -31,12 +31,15 @@ const Idle: NextPage = () => {
 
     ws.on("steamaccount/get", (data) => {
       const steamAccount = data.message as SteamAccount;
+      if (steamAccount.data.playingState.playingBlocked) {
+        steamAccount.state.gamesIdsIdle = [];
+      }
       const gameIdsIdleSet = new Set(steamAccount.state.gamesIdsIdle);
 
       const idlingGames = [];
       let notIdlingGames = [];
 
-      // set  idle property to games that are idling
+      // set idle property to games that are idling
       for (const game of steamAccount.data.games) {
         game.isIdling = gameIdsIdleSet.has(game.gameid);
         if (game.isIdling) {
@@ -183,7 +186,13 @@ const Idle: NextPage = () => {
           onClick={switchForceKickSession}
         />
       </Form>
-      <Row className="my-2">
+      {/* Account is playing elsewhere */}
+      {s?.data.playingState.playingBlocked && (
+        <Row className="pt-2">
+          <AlertMessage message="Account is playing elsewhere." variant="warning" />
+        </Row>
+      )}
+      <Row className="my-3">
         <Button onClick={setIdle} disabled={btnDisabled} className={`mb-2`} variant="primary">
           Set Idle
         </Button>
