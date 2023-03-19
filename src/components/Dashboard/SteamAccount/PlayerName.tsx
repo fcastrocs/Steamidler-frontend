@@ -17,15 +17,15 @@ export default function PlayerName(props: { s: SteamAccount }) {
   function playerNameChange(e: React.ChangeEvent<HTMLHeadingElement>) {
     const newPlayerName = e.target.innerText;
 
-    if (newPlayerName === props.s.data.state.playerName) return;
+    if (newPlayerName === props.s.data.personaState.playerName) return;
 
     if (!newPlayerName) {
-      e.target.innerText = props.s.data.state.playerName;
+      e.target.innerText = props.s.data.personaState.playerName;
       return addToast("Player name cannot be blank.");
     }
 
     if (newPlayerName.length < 1 || newPlayerName.length > 32) {
-      e.target.innerText = props.s.data.state.playerName;
+      e.target.innerText = props.s.data.personaState.playerName;
       return addToast("Error: Your Profile Name must be between 1 and 32 characters in length.");
     }
 
@@ -52,7 +52,7 @@ export default function PlayerName(props: { s: SteamAccount }) {
         spellCheck="false"
         onKeyDown={handleKeyPress}
       >
-        {props.s.data.state.playerName}
+        {props.s.data.personaState.playerName}
       </h6>
     </OverlayTrigger>
   );

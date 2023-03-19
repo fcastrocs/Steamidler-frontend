@@ -82,7 +82,7 @@ export default function Avatar(props: { s: SteamAccount }) {
           />
         )}
         <Card.Img
-          src={props.s.data.state.avatarString}
+          src={props.s.data.personaState.avatarString}
           height={148}
           style={{ position: "absolute", zIndex: 1, top: "15px", left: "20px", width: "180px" }}
         />
